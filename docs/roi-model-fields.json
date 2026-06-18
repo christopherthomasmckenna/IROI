@@ -1,0 +1,624 @@
+{
+  "model_name": "RJC Impact ROI Model",
+  "source_file": "Final_RJC_Impact_ROI_Model__27_January_2026__-_Lock__RJlock_ed_Model.xlsx",
+  "calculation_chain": [
+    "1. CJS Program Costs sheet: each cost line = units_required * cost_per_unit, then * pct_low/medium/high applicability, summed to give Total CJS Cost per Case (Low/Medium/High).",
+    "2. RJC Program Costs sheet: each cost line = hours_or_units * rate_per_unit, summed three ways depending on case outcome (full resolution / pre-conferencing-only-then-CJS / conferenced-but-unresolved-then-CJS, the latter two add in the CJS Medium cost). These three per-outcome costs are blended using rjc_outcome_split percentages (which must sum to 100%) to produce RJC Average Cost Per Case.",
+    "3. HP, RP, Community Inputs sheet: pulls CJS Low/Medium/High totals and RJC Average Cost Per Case in automatically (not separately editable there), plus holds ~17 standalone editable assumptions (restitution, lost income, GED earnings, expungement, incarceration avoidance, community service, tax rate, recidivism reduction).",
+    "4. Cost and Benefit Calculations sheet: combines the HP/RP/Community inputs into four benefit totals - Harmed Party Value, Responsible Party Value (by incarceration-rate sensitivity), Community Value (by sensitivity), each as straightforward sums/products of the inputs above.",
+    "5. Impact ROI sheet: Overall Benefit = (CJS cost - RJC cost) + (HP + RP + Community benefit total), for each of Low/Medium/High. IROI = Overall Benefit / RJC Average Cost Per Case. Also reports IROI broken out by category (program savings vs HP vs RP vs community) at medium sensitivity."
+  ],
+  "known_data_quirk": "Expungement-related earnings avoided (row 32) and its associated percentage (row 33) are duplicated as separate input cells at rows 52/53 in the source spreadsheet, used once for the RP benefit total and again for the tax revenue benefit total. In the ported data model these should be a single field referenced twice by the calc engine, not two fields that could drift out of sync.",
+  "cjs_program_costs": [
+    {
+      "id": "cjs_row13",
+      "label": "Average $ cost of DAO prosecution operations-processing, coordinating, intake, evidence review, preparation, court appearances, plea bargaining discussions, follow up, etc. PER CASE  (Can be broken out into individual rows instead)",
+      "units_required": {
+        "cell": "B13",
+        "default": 1,
+        "creator_editable": true
+      },
+      "cost_per_unit": {
+        "cell": "C13",
+        "default": 2000,
+        "creator_editable": true
+      },
+      "pct_low": {
+        "cell": "F13",
+        "default": 1,
+        "creator_editable": false
+      },
+      "pct_medium": {
+        "cell": "G13",
+        "default": 1,
+        "creator_editable": false
+      },
+      "pct_high": {
+        "cell": "H13",
+        "default": 1,
+        "creator_editable": false
+      },
+      "notes": "This number is calculated by dividing the total DAO budget divided by the number of charges issued per year.  As such, it represents a mythical average cost per charge, some place between the most expensive and least expensive charges to administer but weighted by the number of each type of charges made.  Further, we do not differentiate between low, medium and high, because the average already accounts for the weighting by number of cases - a weighted average that we believe skews low because there are likely many more low-severity/low-cost charges preferred than there are high-severity/high-cost charges.  This number could be improved by identifying 1) the percentage of charges eligible for RJC and the costs associated with charges that could be eligible for RJC.",
+      "cost_per_case": {
+        "computed": true,
+        "formula": "units_required * cost_per_unit",
+        "note": "Source spreadsheet (cell D10) explicitly says 'Do not enter new values in this column' - treat as derived/read-only for both roles, not a stored editable field."
+      }
+    },
+    {
+      "id": "cjs_row14",
+      "label": "Average $ cost Public Defender fees PER CASE",
+      "units_required": {
+        "cell": "B14",
+        "default": 1,
+        "creator_editable": true
+      },
+      "cost_per_unit": {
+        "cell": "C14",
+        "default": 80,
+        "creator_editable": true
+      },
+      "pct_low": {
+        "cell": "F14",
+        "default": 1,
+        "creator_editable": false
+      },
+      "pct_medium": {
+        "cell": "G14",
+        "default": 1,
+        "creator_editable": false
+      },
+      "pct_high": {
+        "cell": "H14",
+        "default": 1,
+        "creator_editable": false
+      },
+      "notes": "$80 value per case was calculated by dividing Philadelphia Public Defender starting salary by the number of annual caseload number  (pg. xii of source).  As with the previous row, because we are using an average that is weighted by the number and type of charges defended, there is no way to differentiate low, medium and high percentages of RJC-eligible cases defended.  This number could be imporoved by identifying 1) the percentage of charges eligible for RJC and the defense costs associated with RJC-eligible charges.",
+      "cost_per_case": {
+        "computed": true,
+        "formula": "units_required * cost_per_unit",
+        "note": "Source spreadsheet (cell D10) explicitly says 'Do not enter new values in this column' - treat as derived/read-only for both roles, not a stored editable field."
+      }
+    },
+    {
+      "id": "cjs_row15",
+      "label": "Average $ cost of Court operations-judge, baliff, clerks, maint, continuances, etc. PER CASE",
+      "units_required": {
+        "cell": "B15",
+        "default": 1,
+        "creator_editable": true
+      },
+      "cost_per_unit": {
+        "cell": "C15",
+        "default": 6000,
+        "creator_editable": true
+      },
+      "pct_low": {
+        "cell": "F15",
+        "default": 1,
+        "creator_editable": false
+      },
+      "pct_medium": {
+        "cell": "G15",
+        "default": 1,
+        "creator_editable": false
+      },
+      "pct_high": {
+        "cell": "H15",
+        "default": 1,
+        "creator_editable": false
+      },
+      "notes": "$6,000 was estimaged by looking at the history of average court budget per case figures: for FY 2017e-$4559; for FY 2018-$4,835; for FY 2019-$5,906, FY 2020-$9,415; for FY 2021-$12,330. We excluded FY2021-2022 because bottlenecks exacerbated by COVID shutdowns created unusually high per case costs for that year. $6,000 seemed reasonable and conservative estimate for FY 2025.  As with the previous row, because we are using an average that is weighted by the number and type of charges incurring court costs, there is no way to differentiate low, medium and high percentages of RJC-eligible cases incurring court costs.  This number could be imporoved by identifying 1) the percentage of charges eligible for RJC and the court costs associated with RJC-eligible charges.",
+      "cost_per_case": {
+        "computed": true,
+        "formula": "units_required * cost_per_unit",
+        "note": "Source spreadsheet (cell D10) explicitly says 'Do not enter new values in this column' - treat as derived/read-only for both roles, not a stored editable field."
+      }
+    },
+    {
+      "id": "cjs_row16",
+      "label": "Average $ cost pre-trial and/or pre-sentencing incarceration PER DAY/PER PERSON",
+      "units_required": {
+        "cell": "B16",
+        "default": 7,
+        "creator_editable": true
+      },
+      "cost_per_unit": {
+        "cell": "C16",
+        "default": 120,
+        "creator_editable": true
+      },
+      "pct_low": {
+        "cell": "F16",
+        "default": 0.1,
+        "creator_editable": false
+      },
+      "pct_medium": {
+        "cell": "G16",
+        "default": 0.5,
+        "creator_editable": false
+      },
+      "pct_high": {
+        "cell": "H16",
+        "default": 1,
+        "creator_editable": false
+      },
+      "notes": "Fiscal Year (FY) 2021 and FY 2022 Cost of Incarceration Fee (COIF) for Federal inmates. This is a conservative value, Philadelphia COIF rates are higher. The # of days is a guess; here's a report that identifies factors that affect pre-trial time but does not give an estimate of actual time. https://www.phila.gov/media/20250616114000/May-2025-Full-Public-Report.pdf.",
+      "cost_per_case": {
+        "computed": true,
+        "formula": "units_required * cost_per_unit",
+        "note": "Source spreadsheet (cell D10) explicitly says 'Do not enter new values in this column' - treat as derived/read-only for both roles, not a stored editable field."
+      }
+    },
+    {
+      "id": "cjs_row17",
+      "label": "Average $ cost post-sentencing incarceration PER DAY/PER PERSON",
+      "units_required": {
+        "cell": "B17",
+        "default": 365,
+        "creator_editable": true
+      },
+      "cost_per_unit": {
+        "cell": "C17",
+        "default": 120,
+        "creator_editable": true
+      },
+      "pct_low": {
+        "cell": "F17",
+        "default": 0.25,
+        "creator_editable": false
+      },
+      "pct_medium": {
+        "cell": "G17",
+        "default": 0.65,
+        "creator_editable": false
+      },
+      "pct_high": {
+        "cell": "H17",
+        "default": 1,
+        "creator_editable": false
+      },
+      "notes": "Used 365 days for one year of incarceration. Fiscal Year (FY) 2021 and FY 2022 Cost of Incarceration Fee (COIF) for Federal inmates. This is a conservative value, Philadelphia COIF rates are higher ($48,000). If an RJC program has a high proportion of people facing felony charges than it would be expected that most participants would face longer terms of incarceration than one year.",
+      "cost_per_case": {
+        "computed": true,
+        "formula": "units_required * cost_per_unit",
+        "note": "Source spreadsheet (cell D10) explicitly says 'Do not enter new values in this column' - treat as derived/read-only for both roles, not a stored editable field."
+      }
+    },
+    {
+      "id": "cjs_row18",
+      "label": "Average $ cost Supervision PER CASE",
+      "units_required": {
+        "cell": "B18",
+        "default": 1,
+        "creator_editable": true
+      },
+      "cost_per_unit": {
+        "cell": "C18",
+        "default": 746,
+        "creator_editable": true
+      },
+      "pct_low": {
+        "cell": "F18",
+        "default": 1,
+        "creator_editable": false
+      },
+      "pct_medium": {
+        "cell": "G18",
+        "default": 1,
+        "creator_editable": false
+      },
+      "pct_high": {
+        "cell": "H18",
+        "default": 1,
+        "creator_editable": false
+      },
+      "notes": "This value was obtained by dividing the 2015 PA budget for supervision ($201,585,365) by the number of people under supervision (270,000). Interviews suggest that this might be between 1000 & 3000 per supervision case annually.  As with several previous rows, because we are using an average that is weighted by the number and type of charges supervised, there is no way to differentiate low, medium and high percentages of RJC-eligible cases supervised.  This number could be improved by identifying 1) the percentage of charges eligible for RJC and the supervision costs associated with RJC-eligible charges.",
+      "cost_per_case": {
+        "computed": true,
+        "formula": "units_required * cost_per_unit",
+        "note": "Source spreadsheet (cell D10) explicitly says 'Do not enter new values in this column' - treat as derived/read-only for both roles, not a stored editable field."
+      }
+    },
+    {
+      "id": "cjs_row19",
+      "label": "DAO CONTRIBUTORS-PLEASE LIST ADDITIONAL COSTS BELOW-List Average $ cost for category PER UNIT (specify unit)",
+      "units_required": {
+        "cell": "B19",
+        "default": 0,
+        "creator_editable": true
+      },
+      "cost_per_unit": {
+        "cell": "C19",
+        "default": 0,
+        "creator_editable": true
+      },
+      "pct_low": {
+        "cell": "F19",
+        "default": null,
+        "creator_editable": false
+      },
+      "pct_medium": {
+        "cell": "G19",
+        "default": null,
+        "creator_editable": false
+      },
+      "pct_high": {
+        "cell": "H19",
+        "default": null,
+        "creator_editable": false
+      },
+      "notes": "Need data from the DA's office on current CJS process for potentially RJC eligible cases. Additional drug testing costs (separate from supervision)?",
+      "cost_per_case": {
+        "computed": true,
+        "formula": "units_required * cost_per_unit",
+        "note": "Source spreadsheet (cell D10) explicitly says 'Do not enter new values in this column' - treat as derived/read-only for both roles, not a stored editable field."
+      }
+    }
+  ],
+  "rjc_program_costs": [
+    {
+      "id": "rjc_row11",
+      "label": "RJC program initially evaluates whether to take case",
+      "hours_or_units": {
+        "cell": "B11",
+        "default": 1,
+        "creator_editable": false
+      },
+      "rate_per_unit": {
+        "cell": "C11",
+        "default": 50,
+        "creator_editable": false
+      },
+      "notes": "$25 matches the hourly cost we heard in interviews, but we raised it to $50 to be conservative because most current initiatives are small and likely understimate the time and cost requirements incurred by larger organizations with larger staffs.  We also increased the hourly rate to capture the total cost of employing someone - that is, the additional amount for tax and benefits - approximately 30% for non-profits (although these extras can go as high as 35%)."
+    },
+    {
+      "id": "rjc_row12",
+      "label": "Pre-conferencing preparation with HPs, RP, and supporters",
+      "hours_or_units": {
+        "cell": "B12",
+        "default": 15,
+        "creator_editable": false
+      },
+      "rate_per_unit": {
+        "cell": "C12",
+        "default": 50,
+        "creator_editable": false
+      },
+      "notes": "High middle or high end of estimates shared in interviews."
+    },
+    {
+      "id": "rjc_row13",
+      "label": "Wrap around/support/case work for HPs, RP, and supporters",
+      "hours_or_units": {
+        "cell": "B13",
+        "default": 15,
+        "creator_editable": false
+      },
+      "rate_per_unit": {
+        "cell": "C13",
+        "default": 50,
+        "creator_editable": false
+      },
+      "notes": "High middle or high end of estimates shared in interviews."
+    },
+    {
+      "id": "rjc_row14",
+      "label": "Transporation for participants to onsite activities and conference",
+      "hours_or_units": {
+        "cell": "B14",
+        "default": 10,
+        "creator_editable": false
+      },
+      "rate_per_unit": {
+        "cell": "C14",
+        "default": 10,
+        "creator_editable": false
+      },
+      "notes": "High middle or high end of estimates shared in interviews."
+    },
+    {
+      "id": "rjc_row15",
+      "label": "Conference facilitation, location coordination, and set up",
+      "hours_or_units": {
+        "cell": "B15",
+        "default": 4,
+        "creator_editable": false
+      },
+      "rate_per_unit": {
+        "cell": "C15",
+        "default": 50,
+        "creator_editable": false
+      },
+      "notes": "High middle or high end of estimates shared in interviews."
+    },
+    {
+      "id": "rjc_row16",
+      "label": "Post-conference food/snacks for \"breaking bread\" together",
+      "hours_or_units": {
+        "cell": "B16",
+        "default": 1,
+        "creator_editable": false
+      },
+      "rate_per_unit": {
+        "cell": "C16",
+        "default": 50,
+        "creator_editable": false
+      },
+      "notes": "High middle or high end of estimates shared in interviews."
+    },
+    {
+      "id": "rjc_row17",
+      "label": "Follow up with participants to monitor/support agreement fulfillment",
+      "hours_or_units": {
+        "cell": "B17",
+        "default": 10,
+        "creator_editable": false
+      },
+      "rate_per_unit": {
+        "cell": "C17",
+        "default": 50,
+        "creator_editable": false
+      },
+      "notes": "High middle or high end of estimates shared in interviews."
+    },
+    {
+      "id": "rjc_row18",
+      "label": "Follow up services and activities for HP and RP-community support and integration, celebration of agreement fulfillment",
+      "hours_or_units": {
+        "cell": "B18",
+        "default": 10,
+        "creator_editable": false
+      },
+      "rate_per_unit": {
+        "cell": "C18",
+        "default": 50,
+        "creator_editable": false
+      },
+      "notes": "High middle or high end of estimates shared in interviews."
+    },
+    {
+      "id": "rjc_row19",
+      "label": "RJC program facilities and adminstrative overhead costs",
+      "hours_or_units": {
+        "cell": "B19",
+        "default": 1,
+        "creator_editable": false
+      },
+      "rate_per_unit": {
+        "cell": "C19",
+        "default": 300,
+        "creator_editable": false
+      },
+      "notes": "Facilities costs, insurance, office supplies, etc."
+    },
+    {
+      "id": "rjc_row20",
+      "label": "RJC progam non-faciliation staff (leadership, financial, data analysis)",
+      "hours_or_units": {
+        "cell": "B20",
+        "default": 1,
+        "creator_editable": false
+      },
+      "rate_per_unit": {
+        "cell": "C20",
+        "default": 250,
+        "creator_editable": false
+      },
+      "notes": "This is the cost of the program management and coordination on a per case basis estimated on the basis of two admin staff in a program handling 1,000 cases/year (average salary of $65,000 and a taxes and benefits overhead of 30%)."
+    },
+    {
+      "id": "rjc_row21",
+      "label": "RJC program ongoing training and professional development",
+      "hours_or_units": {
+        "cell": "B21",
+        "default": 1,
+        "creator_editable": false
+      },
+      "rate_per_unit": {
+        "cell": "C21",
+        "default": 150,
+        "creator_editable": false
+      },
+      "notes": null
+    },
+    {
+      "id": "rjc_row22",
+      "label": "Projected CJS overhead to process a case through RJC",
+      "hours_or_units": {
+        "cell": "B22",
+        "default": 1,
+        "creator_editable": false
+      },
+      "rate_per_unit": {
+        "cell": "C22",
+        "default": 1000,
+        "creator_editable": false
+      },
+      "notes": "Present state includes: \no FTE Juvenile Victim Witness Coordinator \no FTE Director of Family and Youth Services\no FTE Adult Restorative Justice Supervisor \no PTE Juvenile Diversion Supervisor (20%)\no PTE Adult Diversion Supervisor (5%)\no PTE Juvenile Paralegal (10%)\no PTE Data Analyst (10%)\no PTE Researcher (10%)\n\nFuture state may include:\no FTE ADAs and RJ personnel that look at case between\narrest/charging and preliminary hearing\no FTE Adult Restorative Justice Victim Witness Coordinator\no FTE Restorative Justice Paralegal\no PTE Data Analyst (50%)\no PTE Researcher (50%)\n\nNOTE: we adjusted all amounts to reflect the ideas that this staff apportionment could handle about 1000 cases."
+    }
+  ],
+  "rjc_preconferencing_overhead": {
+    "id": "rjc_preconferencing_overhead",
+    "label": "RJC program facilities and adminstrative overhead costs",
+    "hours_or_units": {
+      "cell": "B27",
+      "default": 1,
+      "creator_editable": false
+    },
+    "rate_per_unit": {
+      "cell": "C27",
+      "default": 100,
+      "creator_editable": false
+    },
+    "notes": "This value is only $100 to reflect that doing pre-conferencing only is a fraction of the portion of the overhead."
+  },
+  "rjc_outcome_split": {
+    "resolution_pct": {
+      "cell": "B39",
+      "default": 0.97,
+      "creator_editable": false
+    },
+    "preconferencing_only_pct": {
+      "cell": "C39",
+      "default": 0.025,
+      "creator_editable": true
+    },
+    "conferenced_unresolved_pct": {
+      "cell": "D39",
+      "default": 0.005,
+      "creator_editable": true
+    },
+    "notes": "RJC practioners shared completion rates of 96-99%.",
+    "implementation_note": "Source sheet instructs all three (B/C/D) to be adjusted together so they total 100% (cell A38). The new spec locks resolution_pct (B39) for Creators. Recommended fix: when a Creator edits C39/D39, auto-derive resolution_pct = 1 - C39 - D39 rather than leaving it stale, so the 100% constraint still holds. Admins, who can edit all three directly, should get a validation warning (not silent override) if their three values don't sum to 100%."
+  },
+  "hp_rp_community_inputs": {
+    "avg_harmed_parties_per_case": {
+      "cell": "B15",
+      "default": 2,
+      "label": "Average number of harmed parties per case",
+      "notes": "0-10",
+      "creator_editable": true
+    },
+    "avg_restitution_per_hp": {
+      "cell": "B18",
+      "default": 1500,
+      "label": "Average restitution needed per harmed party",
+      "notes": "$0-10,000",
+      "creator_editable": true
+    },
+    "pct_restitution_increase_rjc": {
+      "cell": "B19",
+      "default": 0.23,
+      "label": "Percent increase in restitution payments made when RP goes through RJC vs. CJS",
+      "notes": null,
+      "creator_editable": false
+    },
+    "avoided_transportation_expense": {
+      "cell": "B22",
+      "default": 250,
+      "label": "Avoided Cost-Transporation Expenses ",
+      "notes": "$0-35,000",
+      "creator_editable": true
+    },
+    "avoided_loss_of_income": {
+      "cell": "B23",
+      "default": 5000,
+      "label": "Avoided Cost-Loss of Income ",
+      "notes": "$0-15,000",
+      "creator_editable": true
+    },
+    "pct_time_expense_difference": {
+      "cell": "B24",
+      "default": 0.8,
+      "label": "Percent difference in time and expense lost due to attending legal proceedings.  ",
+      "notes": "0-100%",
+      "creator_editable": true
+    },
+    "ged_earnings_increase": {
+      "cell": "B28",
+      "default": 8840,
+      "label": "Average increase in one year earnings when GED/high school diploma obtained OR continuing education through RJC agreements. ",
+      "notes": "$5,252-27,920",
+      "creator_editable": true
+    },
+    "pct_obtaining_ged": {
+      "cell": "B29",
+      "default": 0.1,
+      "label": "Percent obtaining GED/continuing education due to RJC program agreements",
+      "notes": null,
+      "creator_editable": true
+    },
+    "expungement_earnings_avoided": {
+      "cell": "B32",
+      "default": 3016,
+      "label": "Avoided decrease in earnings due to expungment instead of having a record",
+      "notes": "16-52% decrease",
+      "creator_editable": false
+    },
+    "pct_expungement_rate_increase": {
+      "cell": "B33",
+      "default": 0.8,
+      "label": "Percent increase in expungement rate due to RJC program over CJS program",
+      "notes": "20-100%",
+      "creator_editable": false
+    },
+    "rp_earnings_not_incarcerated": {
+      "cell": "B36",
+      "default": 15080,
+      "label": "One year earnings due to RJC program vs. average one year of being incarcerated (RJ practioners noted potential sentences from 3-24 months, with many in the 11-24 month range)",
+      "notes": null,
+      "creator_editable": false
+    },
+    "community_service_hours": {
+      "cell": "B43",
+      "default": 40,
+      "label": "Average hours of community service per case",
+      "notes": "20-40",
+      "creator_editable": true
+    },
+    "community_service_dollar_per_hour": {
+      "cell": "B44",
+      "default": 15,
+      "label": "Dollar value of community service/hour",
+      "notes": "$7.25-15",
+      "creator_editable": true
+    },
+    "pct_completing_community_service": {
+      "cell": "B45",
+      "default": 0.15,
+      "label": "Percentage of RP that are assigned and complete community service as part of RJC agreements",
+      "notes": "0-100%",
+      "creator_editable": true
+    },
+    "tax_avoided_earnings": {
+      "cell": "B48",
+      "default": 15080,
+      "label": "Avoided lost one year taxable earnings due to RJC program vs. one year of being incarcerated (federal minimum wage).",
+      "notes": "$0-$60,000",
+      "creator_editable": false
+    },
+    "tax_rate": {
+      "cell": "B49",
+      "default": 0.1675,
+      "label": "Conservative tax rate of 16.75% (Federal-10%, PA state tax-3%, Phila city wage tax-3.75%)",
+      "notes": "5-25% tax rate",
+      "creator_editable": false
+    },
+    "expungement_earnings_avoided_DUPLICATE_OF_32": {
+      "cell": "B52",
+      "default": 3016,
+      "label": "Avoided decrease in earnings due to expungment instead of having a record",
+      "notes": "16-52% decrease",
+      "creator_editable": false
+    },
+    "pct_expungement_rate_increase_DUPLICATE_OF_33": {
+      "cell": "B53",
+      "default": 0.8,
+      "label": "Percent increase in expungement rate due to RJC program over CJS program",
+      "notes": "20-100%",
+      "creator_editable": false
+    },
+    "pct_recidivism_reduction": {
+      "cell": "B59",
+      "default": 0.15,
+      "label": "% Reduction in Recidivism with RJC Programs Compared To CJS Programs (for example, if a typical CJS recidivism rate over five years is 20%, RJC program recidivism is 13%).",
+      "notes": "7-29%",
+      "creator_editable": false
+    }
+  },
+  "outputs_reference_values": {
+    "iroi_sensitivity": {
+      "low": 6.141271825755723,
+      "medium": 11.031652710241923,
+      "high": 15.336432120702682
+    },
+    "iroi_by_category_medium_sensitivity": {
+      "program_savings": 5.68844365470351,
+      "harmed_party_benefits": 1.611993658427588,
+      "responsible_party_benefits": 2.3229023688681285,
+      "community_benefits": 1.4083130282426963
+    },
+    "note": "These are reference values computed from the DEFAULT inputs above. The web app must reproduce them exactly when all fields are left at default, as a correctness check on the ported calculation engine."
+  }
+}
