@@ -1,0 +1,1 @@
+ALTER TABLE "roi_cases" ADD COLUMN "promoted_at" timestamp with time zone;

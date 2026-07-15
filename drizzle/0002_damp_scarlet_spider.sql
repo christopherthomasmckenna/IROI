@@ -1,0 +1,1 @@
+ALTER TABLE "roi_cases" ADD COLUMN "live_version_id" uuid;

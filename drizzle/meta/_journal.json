@@ -1,0 +1,62 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1781822633481,
+      "tag": "0000_burly_tomorrow_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1781824429956,
+      "tag": "0001_clean_human_fly",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1781918976586,
+      "tag": "0002_damp_scarlet_spider",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1781920864082,
+      "tag": "0003_last_night_thrasher",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1781972744809,
+      "tag": "0004_fair_morlocks",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1781984326876,
+      "tag": "0005_amused_vision",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1782082640243,
+      "tag": "0006_aberrant_stature",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1782157498256,
+      "tag": "0007_talented_outlaw_kid",
+      "breakpoints": true
+    }
+  ]
+}

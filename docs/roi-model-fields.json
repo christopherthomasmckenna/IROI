@@ -26,17 +26,17 @@
       "pct_low": {
         "cell": "F13",
         "default": 1,
-        "creator_editable": false
+        "creator_editable": true
       },
       "pct_medium": {
         "cell": "G13",
         "default": 1,
-        "creator_editable": false
+        "creator_editable": true
       },
       "pct_high": {
         "cell": "H13",
         "default": 1,
-        "creator_editable": false
+        "creator_editable": true
       },
       "notes": "This number is calculated by dividing the total DAO budget divided by the number of charges issued per year.  As such, it represents a mythical average cost per charge, some place between the most expensive and least expensive charges to administer but weighted by the number of each type of charges made.  Further, we do not differentiate between low, medium and high, because the average already accounts for the weighting by number of cases - a weighted average that we believe skews low because there are likely many more low-severity/low-cost charges preferred than there are high-severity/high-cost charges.  This number could be improved by identifying 1) the percentage of charges eligible for RJC and the costs associated with charges that could be eligible for RJC.",
       "cost_per_case": {
@@ -61,17 +61,17 @@
       "pct_low": {
         "cell": "F14",
         "default": 1,
-        "creator_editable": false
+        "creator_editable": true
       },
       "pct_medium": {
         "cell": "G14",
         "default": 1,
-        "creator_editable": false
+        "creator_editable": true
       },
       "pct_high": {
         "cell": "H14",
         "default": 1,
-        "creator_editable": false
+        "creator_editable": true
       },
       "notes": "$80 value per case was calculated by dividing Philadelphia Public Defender starting salary by the number of annual caseload number  (pg. xii of source).  As with the previous row, because we are using an average that is weighted by the number and type of charges defended, there is no way to differentiate low, medium and high percentages of RJC-eligible cases defended.  This number could be imporoved by identifying 1) the percentage of charges eligible for RJC and the defense costs associated with RJC-eligible charges.",
       "cost_per_case": {
@@ -96,17 +96,17 @@
       "pct_low": {
         "cell": "F15",
         "default": 1,
-        "creator_editable": false
+        "creator_editable": true
       },
       "pct_medium": {
         "cell": "G15",
         "default": 1,
-        "creator_editable": false
+        "creator_editable": true
       },
       "pct_high": {
         "cell": "H15",
         "default": 1,
-        "creator_editable": false
+        "creator_editable": true
       },
       "notes": "$6,000 was estimaged by looking at the history of average court budget per case figures: for FY 2017e-$4559; for FY 2018-$4,835; for FY 2019-$5,906, FY 2020-$9,415; for FY 2021-$12,330. We excluded FY2021-2022 because bottlenecks exacerbated by COVID shutdowns created unusually high per case costs for that year. $6,000 seemed reasonable and conservative estimate for FY 2025.  As with the previous row, because we are using an average that is weighted by the number and type of charges incurring court costs, there is no way to differentiate low, medium and high percentages of RJC-eligible cases incurring court costs.  This number could be imporoved by identifying 1) the percentage of charges eligible for RJC and the court costs associated with RJC-eligible charges.",
       "cost_per_case": {
@@ -131,17 +131,17 @@
       "pct_low": {
         "cell": "F16",
         "default": 0.1,
-        "creator_editable": false
+        "creator_editable": true
       },
       "pct_medium": {
         "cell": "G16",
         "default": 0.5,
-        "creator_editable": false
+        "creator_editable": true
       },
       "pct_high": {
         "cell": "H16",
         "default": 1,
-        "creator_editable": false
+        "creator_editable": true
       },
       "notes": "Fiscal Year (FY) 2021 and FY 2022 Cost of Incarceration Fee (COIF) for Federal inmates. This is a conservative value, Philadelphia COIF rates are higher. The # of days is a guess; here's a report that identifies factors that affect pre-trial time but does not give an estimate of actual time. https://www.phila.gov/media/20250616114000/May-2025-Full-Public-Report.pdf.",
       "cost_per_case": {
@@ -166,17 +166,17 @@
       "pct_low": {
         "cell": "F17",
         "default": 0.25,
-        "creator_editable": false
+        "creator_editable": true
       },
       "pct_medium": {
         "cell": "G17",
         "default": 0.65,
-        "creator_editable": false
+        "creator_editable": true
       },
       "pct_high": {
         "cell": "H17",
         "default": 1,
-        "creator_editable": false
+        "creator_editable": true
       },
       "notes": "Used 365 days for one year of incarceration. Fiscal Year (FY) 2021 and FY 2022 Cost of Incarceration Fee (COIF) for Federal inmates. This is a conservative value, Philadelphia COIF rates are higher ($48,000). If an RJC program has a high proportion of people facing felony charges than it would be expected that most participants would face longer terms of incarceration than one year.",
       "cost_per_case": {
@@ -201,17 +201,17 @@
       "pct_low": {
         "cell": "F18",
         "default": 1,
-        "creator_editable": false
+        "creator_editable": true
       },
       "pct_medium": {
         "cell": "G18",
         "default": 1,
-        "creator_editable": false
+        "creator_editable": true
       },
       "pct_high": {
         "cell": "H18",
         "default": 1,
-        "creator_editable": false
+        "creator_editable": true
       },
       "notes": "This value was obtained by dividing the 2015 PA budget for supervision ($201,585,365) by the number of people under supervision (270,000). Interviews suggest that this might be between 1000 & 3000 per supervision case annually.  As with several previous rows, because we are using an average that is weighted by the number and type of charges supervised, there is no way to differentiate low, medium and high percentages of RJC-eligible cases supervised.  This number could be improved by identifying 1) the percentage of charges eligible for RJC and the supervision costs associated with RJC-eligible charges.",
       "cost_per_case": {
@@ -236,17 +236,17 @@
       "pct_low": {
         "cell": "F19",
         "default": null,
-        "creator_editable": false
+        "creator_editable": true
       },
       "pct_medium": {
         "cell": "G19",
         "default": null,
-        "creator_editable": false
+        "creator_editable": true
       },
       "pct_high": {
         "cell": "H19",
         "default": null,
-        "creator_editable": false
+        "creator_editable": true
       },
       "notes": "Need data from the DA's office on current CJS process for potentially RJC eligible cases. Additional drug testing costs (separate from supervision)?",
       "cost_per_case": {
@@ -304,7 +304,7 @@
     },
     {
       "id": "rjc_row14",
-      "label": "Transporation for participants to onsite activities and conference",
+      "label": "Transportation for participants to onsite activities and conference",
       "hours_or_units": {
         "cell": "B14",
         "default": 10,
@@ -457,7 +457,7 @@
     "resolution_pct": {
       "cell": "B39",
       "default": 0.97,
-      "creator_editable": false
+      "creator_editable": true
     },
     "preconferencing_only_pct": {
       "cell": "C39",
@@ -470,7 +470,7 @@
       "creator_editable": true
     },
     "notes": "RJC practioners shared completion rates of 96-99%.",
-    "implementation_note": "Source sheet instructs all three (B/C/D) to be adjusted together so they total 100% (cell A38). The new spec locks resolution_pct (B39) for Creators. Recommended fix: when a Creator edits C39/D39, auto-derive resolution_pct = 1 - C39 - D39 rather than leaving it stale, so the 100% constraint still holds. Admins, who can edit all three directly, should get a validation warning (not silent override) if their three values don't sum to 100%."
+    "implementation_note": "Source sheet instructs all three (B/C/D) to be adjusted together so they total 100% (cell A38). Per product decision (2026-06-19), all three are editable by Creators (resolution_pct/B39 is no longer locked). The 100% constraint is enforced in the app, NOT by auto-derivation: the split is edited as a group, the running total is shown live, and the Save is blocked (client-side) and rejected (server-side) unless the three sum to 100% within a small epsilon. The calculation engine still requires sum-to-1, so it never receives invalid input."
   },
   "hp_rp_community_inputs": {
     "avg_harmed_parties_per_case": {
@@ -497,7 +497,7 @@
     "avoided_transportation_expense": {
       "cell": "B22",
       "default": 250,
-      "label": "Avoided Cost-Transporation Expenses ",
+      "label": "Avoided Cost-Transportation Expenses ",
       "notes": "$0-35,000",
       "creator_editable": true
     },
@@ -620,5 +620,85 @@
       "community_benefits": 1.4083130282426963
     },
     "note": "These are reference values computed from the DEFAULT inputs above. The web app must reproduce them exactly when all fields are left at default, as a correctness check on the ported calculation engine."
+  },
+  "field_tooltips": {
+    "cjs_row13": "Notes:\nThis number is calculated by dividing the total DAO budget divided by the number of charges issued per year.  As such, it represents a mythical average cost per charge, some place between the most expensive and least expensive charges to administer but weighted by the number of each type of charges made.  Further, we do not differentiate between low, medium and high, because the average already accounts for the weighting by number of cases - a weighted average that we believe skews low because there are likely many more low-severity/low-cost charges preferred than there are high-severity/high-cost charges.  This number could be improved by identifying 1) the percentage of charges eligible for RJC and the costs associated with charges that could be eligible for RJC.\n\nSources:\nValues provided by Philadelphia DAO. See interview list in report bibliography.    Boochever, O adn Meire, C. (2023). Safety in Numbers: Analyzing the Costs and Outcomes in the Philadelphia Criminal Legal System. Harvard Kennedy School. https://drive.google.com/file/d/1QeajLVpWXGZz0ntJIYCFVURWg8iEL_CG/view?usp=drivesdk",
+    "cjs_row14": "Notes:\n$80 value per case was calculated by dividing Philadelphia Public Defender starting salary by the number of annual caseload number  (pg. xii of source).  As with the previous row, because we are using an average that is weighted by the number and type of charges defended, there is no way to differentiate low, medium and high percentages of RJC-eligible cases defended.  This number could be improved by identifying 1) the percentage of charges eligible for RJC and the defense costs associated with RJC-eligible charges.\n\nSources:\nhttps://fingfx.thomsonreuters.com/gfx/legaldocs/egvbmodrzpq/RAND_RRA2559-1.pdf\nhttps://whyy.org/articles/philly-public-defenders-staff-pay-raise/",
+    "cjs_row15": "Notes:\n$6,000 was estimated by looking at the history of average court budget per case figures: for FY 2017e-$4559; for FY 2018-$4,835; for FY 2019-$5,906, FY 2020-$9,415; for FY 2021-$12,330. We excluded FY2021-2022 because bottlenecks exacerbated by COVID shutdowns created unusually high per case costs for that year. $6,000 seemed reasonable and conservative estimate for FY 2025.  As with the previous row, because we are using an average that is weighted by the number and type of charges incurring court costs, there is no way to differentiate low, medium and high percentages of RJC-eligible cases incurring court costs.  This number could be improved by identifying 1) the percentage of charges eligible for RJC and the court costs associated with RJC-eligible charges.\n\nSources:\nBoochever, O adn Meire, C. (2023). Safety in Numbers: Analyzing the Costs and Outcomes in the Philadelphia Criminal Legal System. Harvard Kennedy School.  \nhttps://drive.google.com/file/d/1QeajLVpWXGZz0ntJIYCFVURWg8iEL_CG/view?usp=drivesdk",
+    "cjs_row16": "Notes:\nFiscal Year (FY) 2021 and FY 2022 Cost of Incarceration Fee (COIF) for Federal inmates. This is a conservative value, Philadelphia COIF rates are higher. The # of days is a guess; here's a report that identifies factors that affect pre-trial time but does not give an estimate of actual time. https://www.phila.gov/media/20250616114000/May-2025-Full-Public-Report.pdf.\n\nSources:\nhttps://www.federalregister.gov/documents/2023/09/22/2023-20585/annual-determination-of-average-cost-of-incarceration-fee-coif\nhttps://www.phila.gov/media/20250616114000/May-2025-Full-Public-Report.pdf",
+    "cjs_row17": "Notes:\nUsed 365 days for one year of incarceration. Fiscal Year (FY) 2021 and FY 2022 Cost of Incarceration Fee (COIF) for Federal inmates. This is a conservative value, Philadelphia COIF rates are higher ($48,000). If an RJC program has a high proportion of people facing felony charges than it would be expected that most participants would face longer terms of incarceration than one year.\n\nSource:\nhttps://www.federalregister.gov/documents/2023/09/22/2023-20585/annual-determination-of-average-cost-of-incarceration-fee-coif\nIf RJ cases are weighted to misdemeanor then low to medium range; if weighted to felony than >1yr (could be more than 150%). Safety in Numbers Analyzing Costs and Outcomes in the Philadelphia Criminal Legal System, Prepared by Oscar Boochever and Chuck Meire, Harvard Kennedy School, April 4, 2023.",
+    "cjs_row18": "Notes:\nThis value was obtained by dividing the 2015 PA budget for supervision ($201,585,365) by the number of people under supervision (270,000). Interviews suggest that this might be between 1000 & 3000 per supervision case annually.  As with several previous rows, because we are using an average that is weighted by the number and type of charges supervised, there is no way to differentiate low, medium and high percentages of RJC-eligible cases supervised.  This number could be improved by identifying 1) the percentage of charges eligible for RJC and the supervision costs associated with RJC-eligible charges.\n\nSources:\nhttps://www.palbfc.gov/Resources/Documents/Reports/509.pdf",
+    "cjs_row19": "Need data from the DA's office on current CJS process for potentially RJC eligible cases. Additional drug testing costs (separate from supervision)?",
+    "rjc_row11": "Notes:\n$25 matches the hourly cost we heard in interviews, but we raised it to $50 to be conservative because most current initiatives are small and likely underestimate the time and cost requirements incurred by larger organizations with larger staffs.  We also increased the hourly rate to capture the total cost of employing someone - that is, the additional amount for tax and benefits - approximately 30% for non-profits (although these extras can go as high as 35%).\n\nSource:\nValues provided by RJC programs. See interview list in report bibliography.\nhttps://github.com/phillydao/phillydao-public-data/raw/main/docs/reports/RJ%20DAO%20Impact%20Measurement%20Report%20(Final%20January%2027%202026).pdf",
+    "rjc_row12": "Notes:\nHigh middle or high end of estimates shared in interviews.\n\nSource:\nValues provided by RJC programs. See interview list in report bibliography.\nhttps://github.com/phillydao/phillydao-public-data/raw/main/docs/reports/RJ%20DAO%20Impact%20Measurement%20Report%20(Final%20January%2027%202026).pdf",
+    "rjc_row13": "Notes:\nHigh middle or high end of estimates shared in interviews.\n\nSource:\nValues provided by RJC programs. See interview list in report bibliography.\nhttps://github.com/phillydao/phillydao-public-data/raw/main/docs/reports/RJ%20DAO%20Impact%20Measurement%20Report%20(Final%20January%2027%202026).pdf",
+    "rjc_row14": "Notes:\nHigh middle or high end of estimates shared in interviews.\n\nSource:\nValues provided by RJC programs. See interview list in report bibliography.\nhttps://github.com/phillydao/phillydao-public-data/raw/main/docs/reports/RJ%20DAO%20Impact%20Measurement%20Report%20(Final%20January%2027%202026).pdf",
+    "rjc_row15": "Notes:\nHigh middle or high end of estimates shared in interviews.\n\nSource:\nValues provided by RJC programs. See interview list in report bibliography.\nhttps://github.com/phillydao/phillydao-public-data/raw/main/docs/reports/RJ%20DAO%20Impact%20Measurement%20Report%20(Final%20January%2027%202026).pdf",
+    "rjc_row16": "Notes:\nHigh middle or high end of estimates shared in interviews.\n\nSource:\nValues provided by RJC programs. See interview list in report bibliography.\nhttps://github.com/phillydao/phillydao-public-data/raw/main/docs/reports/RJ%20DAO%20Impact%20Measurement%20Report%20(Final%20January%2027%202026).pdf",
+    "rjc_row17": "Notes:\nHigh middle or high end of estimates shared in interviews.\n\nSource:\nValues provided by RJC programs. See interview list in report bibliography.\nhttps://github.com/phillydao/phillydao-public-data/raw/main/docs/reports/RJ%20DAO%20Impact%20Measurement%20Report%20(Final%20January%2027%202026).pdf",
+    "rjc_row18": "Notes:\nHigh middle or high end of estimates shared in interviews.\n\nSource:\nValues provided by RJC programs. See interview list in report bibliography.\nhttps://github.com/phillydao/phillydao-public-data/raw/main/docs/reports/RJ%20DAO%20Impact%20Measurement%20Report%20(Final%20January%2027%202026).pdf",
+    "rjc_row19": "Notes:\nHigh middle or high end of estimates shared in interviews.\n\nSource:\nValues provided by RJC programs. See interview list in report bibliography.\nhttps://github.com/phillydao/phillydao-public-data/raw/main/docs/reports/RJ%20DAO%20Impact%20Measurement%20Report%20(Final%20January%2027%202026).pdf",
+    "rjc_row20": "Notes:\nThis is the cost of the program management and coordination on a per case basis estimated on the basis of two admin staff in a program handling 1,000 cases/year (average salary of $65,000 and a taxes and benefits overhead of 30%).\n\nSource:\nValues provided by RJC programs. See interview list in report bibliography.\nhttps://github.com/phillydao/phillydao-public-data/raw/main/docs/reports/RJ%20DAO%20Impact%20Measurement%20Report%20(Final%20January%2027%202026).pdf",
+    "rjc_row21": "Note:\nRJC program ongoing training and professional development\n\nSource:\nValues provided by RJC programs. See interview list in report bibliography.\nhttps://github.com/phillydao/phillydao-public-data/raw/main/docs/reports/RJ%20DAO%20Impact%20Measurement%20Report%20(Final%20January%2027%202026).pdf",
+    "rjc_row22": "Present state includes: \no FTE Juvenile Victim Witness Coordinator \no FTE Director of Family and Youth Services\no FTE Adult Restorative Justice Supervisor \no PTE Juvenile Diversion Supervisor (20%)\no PTE Adult Diversion Supervisor (5%)\no PTE Juvenile Paralegal (10%)\no PTE Data Analyst (10%)\no PTE Researcher (10%)\n\nFuture state may include:\no FTE ADAs and RJ personnel that look at case between\narrest/charging and preliminary hearing\no FTE Adult Restorative Justice Victim Witness Coordinator\no FTE Restorative Justice Paralegal\no PTE Data Analyst (50%)\no PTE Researcher (50%)\n\nNOTE: we adjusted all amounts to reflect the ideas that this staff apportionment could handle about 1000 cases.\n\nSource:\nFrom Personal Communication with DAO staffers on 1/24/25.  Estimated value.  DA office is working to improve the estimate.",
+    "rjc_preconferencing_overhead": "This value is only $100 to reflect that doing pre-conferencing only is a fraction of the portion of the overhead.",
+    "rjc_outcome_split.resolution_pct": "Note:\nRJC practitioners shared completion rates of 96-99%.\n\nSource:\nValues provided by RJC programs. See interview list in report bibliography.\nhttps://github.com/phillydao/phillydao-public-data/raw/main/docs/reports/RJ%20DAO%20Impact%20Measurement%20Report%20(Final%20January%2027%202026).pdf",
+    "rjc_outcome_split.preconferencing_only_pct": "Note:\nPre-conferencing only % (\u2192 CJS) \u2014 RJC practitioners shared completion rates of 96-99%.\nCost for cases that go through pre-conferencing only, do not proceed, and go back to CJS, (partial RJC Costs + CJS Costs)\n\nSource:\nValues provided by RJC programs. See interview list in report bibliography.\nhttps://github.com/phillydao/phillydao-public-data/raw/main/docs/reports/RJ%20DAO%20Impact%20Measurement%20Report%20(Final%20January%2027%202026).pdf",
+    "rjc_outcome_split.conferenced_unresolved_pct": "Notes:\nRJC practitioners shared completion rates of 96-99%.\nCost for cases that go through RJC process, but not resolved and back to CJS, (full RJC + CJS Costs)\n\nSource:\nValues provided by RJC programs. See interview list in report bibliography.\nhttps://github.com/phillydao/phillydao-public-data/raw/main/docs/reports/RJ%20DAO%20Impact%20Measurement%20Report%20(Final%20January%2027%202026).pdf",
+    "avg_harmed_parties_per_case": "Range: 0-10\nNotes:\nTwo HP is conservative. All RJC practitioners interviewed shared that in addition to the directly harmed party, those closest to them (spouse, child, parent) are also harmed during events that impact HP safety and welfare. \n\nSources:\nSource:\nValues provided by RJC programs. See interview list in report bibliography.\nhttps://github.com/phillydao/phillydao-public-data/raw/main/docs/reports/RJ%20DAO%20Impact%20Measurement%20Report%20(Final%20January%2027%202026).pdf",
+    "avg_restitution_per_hp": "Range: $0-10,000\nNotes:\n$1500 over and above what the victim fund might pay for eligible costs. (One interviewee suggested $3000, and another $1000.)\n\nSources:\nAdditional values provided by RJC programs. See interview list in report bibliography.   https://www.aclupa.org/app/uploads/2021/03/fines_and_costs_report_updated_march_2021.pdf",
+    "pct_restitution_increase_rjc": "Notes:\nRP in RJC programs are more likely to pay restitution (89%) than those sentenced through CJS (66%), a 23% increase.\n\nSources:\nDom\u00ednguez, P., & Raphael, S. (2015). The role of the cost-of-crime literature in bridging the gap between social science research and policy making: Potentials and limitations. Criminology & Public Policy, 14(4), 589-632. https://doi.org/10.1111/1745-9133.12148",
+    "avoided_transportation_expense": "Range: $0-35,000\nNotes:\nFunds used to reimburse an individual who incurs expenses traveling to or from counseling or to attend a criminal justice proceeding, and for efforts that aid the investigation.  RJC programs typically include transporation for participants in their program costs. Estimated expenses as valued by PA Victim Compensation Funds value ($35,000 maximum). Adult diversion estimate provided by RJC practitioners (see interview notes).\n\nSources:\nhttps://www.pa.gov/content/dam/copapwp-pagov/en/pcv/documents/for-victims/documents/transportation%20expenses.pdf",
+    "avoided_loss_of_income": "Range: $0-15,000\nNotes:\nFunds used to cover losses to do attending court, counseling, and efforts that aid the investigation. Estimated expenses as valued by PA Victim Compensation Funds ($15,000 maximum). $7,500 was chosen as a reasonable estimate to account for HP variety of earnings and situations. HP with salaried jobs and benefits may be able to take time without direct compensation loss. HP involved in hourly or gig work will have more substantial impacts and lost working opportunties because of time needed to attend legal proceedings. Depending on the jurisdiction, there might be a fund to cover some of these expenses. A portion of this HP benefit might in fact be a community benefit if there is a fund available and HP go through the process to receive those benefits. \n\nSources:\nhttps://www.pa.gov/content/dam/copapwp-pagov/en/pcv/documents/victims-compensation/loss%20of%20earnings%20flyer.pdf",
+    "pct_time_expense_difference": "Range: 0-100%\nNotes:\ni.e. # of days and trips needed to participate in RJC compared to # of days and trips to participate in CJS. RJC scheduling is streamlined to those directly invovled and flexible to accomodate scheduling needs. CJS court appearances are often stayed because a critical participant does not show, rescheduling after showing up for scheduled appointments adds to total missed work hours for HP. \n\nSources:\nNeed DAO staff input for this data point, estimate based on interviews.",
+    "ged_earnings_increase": "Range: $5,252-27,920\nNotes:\n20% reduction was chosen to be convservative in the wide range between 16% for misdeamenor convictions and 52% for felony convictions. Assuming a yearly federal minimum wage salary of $15,080, a 20% reduction because of having a criminal record would be a loss of $3,016 dollars. This is conservative estimate of the avoided cost.\n\nSources:\nhttps://www.brennancenter.org/our-work/research-reports/conviction-imprisonment-and-lost-earnings-how-involvement-criminal#:~:text=People%20convicted%20of%20a%20felony,an%20average%20of%2016%20percent.",
+    "pct_obtaining_ged": "Notes:\nEstimate - See RJC practitioner interview notes. This could be improved by surveying more practitioners.",
+    "expungement_earnings_avoided": "Range: 16-52% decrease\nNotes:\n20% reduction was chosen to be convservative in the wide range between 16% for misdeamenor convictions and 52% for felony convictions. Assuming a yearly federal minimum wage salary of $15,080, a 20% reduction because of having a criminal record would be a loss of $3,016 dollars. This is conservative estimate of the avoided cost.\n\nSources:\nhttps://www.brennancenter.org/our-work/research-reports/conviction-imprisonment-and-lost-earnings-how-involvement-criminal#:~:text=People%20convicted%20of%20a%20felony,an%20average%20of%2016%20percent.",
+    "pct_expungement_rate_increase": "Range: 20-100%\nNotes:\nConviction relief/expungement follow through below 20% is the norm after CJS (pg. 524). RJC programs have 95-100% expungement. \n\nSources:\nChien, Colleen V. \u201cAmerica\u2019s Paper Prisons: The Second Chance Gap.\u201d SSRN Scholarly Paper. Rochester, NY: Social Science Research Network, December 16, 2020. https://doi.org/10.2139/ssrn.3265335.\nhttps://doi.org/10.2139/ssrn.3265335",
+    "rp_earnings_not_incarcerated": "Notes:\nFederal minimum wage is $15,080 for a full time worker. Incarceration sentences vary greatly depending on type of charge and whether a felony or misdemeanor. The average sentencing for most types of charges was still greater than 12 months. The cost of incarceration would be avoided through RJC programs.\n\nSources:\n\"https://www.dol.gov/general/topic/wages/minimumwage\nhttps://www.ussc.gov/about/annual-report-2023?utm_source=chatgpt.com#_ftn10 \nhttps://www.prisonpolicy.org/global/2024.html#:~:text=As%20a%20result%2C%20incarceration%20has,and%20just%20in%20the%20world \"",
+    "community_service_hours": "Range: 20-40\nNotes:\nWhen community service is part of agreements, it's typically around 40 hours. Note that we assume only 15% of cases include community service.\n\nSources:\nSee RJC practitioner interview notes.",
+    "community_service_dollar_per_hour": "Range: $7.25-15\nNotes:\nMuch higher estimates ($31/hour in PA) are currently accepted as the dollar value of community service, but $15/hour was a more conservative estimate to reflect earnings closer to the minimum wage.\n\nSources:\nhttps://independentsector.org/wp-content/uploads/2024/04/is-vovt-report-all-years_v2-1.pdf",
+    "pct_completing_community_service": "Range: 0-100%\nNotes:\nSee interview notes from RJ practitioners. \n\nSource:\nSee RJC practitioner interview notes. This could be improved by surveying more practitioners.",
+    "tax_avoided_earnings": "Range: $0-$60,000\nNotes:\nFederal minimum wage one year salary.\n\nSources:\nhttps://www.dol.gov/general/topic/wages/minimumwage",
+    "tax_rate": "Range: 5-25% tax rate\nNotes:\nhttps://www.irs.gov/filing/federal-income-tax-rates-and-brackets\n\nSources:\nhttps://www.pa.gov/agencies/revenue/resources/tax-rates.html\nhttps://www.phila.gov/services/payments-assistance-taxes/taxes/business-taxes/business-taxes-by-type/wage-tax-employers/",
+    "pct_recidivism_reduction": "Range: 7-29%\n\nNotes:\nEstimates vary for recidivism rates for those who complete a competent, adult-oriented RJ program.\u00a0 The recidivism rates people who have completed RJ programs range from 6% to 19% within five years of completing the contract (Kimmenez, 2024; Sered, 2019).\u00a0 These rates are much less than Pennsylvania\u2019s ~35% three-year recidivism rate for those going through the CJS system (Bucklen et al., 2022),[1].  Our model assumes only a 1 year timespan, and it would be reasonable to expect that the RJC recividism rate would be better for one year than for five years.  Nevertheless, we use a very conservative 15%.  \n\nSources:\nhttps://gspp.berkeley.edu/assets/uploads/research/pdf/Dom-nguez_et_al-2015-Criminology__Public_Policy.pdf\nSee also this meta-analyses across multiple studies that reported 7% and 15% reduction in recidivism rates per year (over multiple years) for participants in RJC interventions, as compared to those conventional process (respectively, Latimer, Dowden & Muise, 2005 and Strang et al., 2013).[2]"
+  },
+  "section_instructions": {
+    "cjs": [
+      "This sheet details the AVERAGE costs associated with Criminal Justice System (CJS) processing PER CASE. One case = one responsible party (RP) eligible to be referred by the DA's office to a Restorative Justice Conferencing (RJC) program.",
+      "Cost estimates were gathered through research sources (see notes and sources in this sheet) and through interviews with the Philadelphia District Attorney's Office. DAO staff are working on collecting and reporting more detailed costs; the model can be adjusted as these become available, and also includes an additional row for any additional categories of costs.",
+      "To account for both unknowns and diversty in CJS costs (e.g., between jurisdictions), this model provides for three different levels of \"sensititivty\", that is low, medium, and high cost estimates. Model users can change the \"units required\" column values and the \"percentage of RJC eligible cases in which this CJS cost would be applicable\" column values as they see fit to match the typical use of processes for different types of charges. For example, for an assault charge, the use of any pre-trial incarceration days may apply to only a certain percentage of cases. The typical number of pre-trial incarceration days also varies between cases. Users can modify these columns for increased accuracy.  Note: Some rows have low, medium, and high percentages set at 100% because those costs typically apply to everyone involved in a CJS process.",
+      "Note on nomenclature: The cost estimates below are used to describe costs that the government would typically incur from the time of charging until an eligible case has been \"completed\" in the CJS system. It is important to note that the cost to \"complete a case\" does not necessarily lead to the practical matter of \"resolving a case\" in which harmed parties or those impacted have been satisfied. \"Completing a case\" in the CJS means that the case has proceeded through CJS processes until the CJS program determines that the process is complete. Completion in this sense may be procedural and have little to do with the needs of those involved or a specific goal (i.e. enacting plans to prevent future harm, demonstrating understanding of impact, taking accountability and doing apologies of action, personal growth demonstrated by positive changes in behavior patterns, applying new skills, public safety, etc.). In CJS, the outcomes and agreement plans are not determined by those most impacted, so it is difficult to determine when and if a case has truly been \"resolved.\"",
+      "Note on nomenclature: The commonly used term \"Criminal Justice System\" (CJS) is used throughout this model to describe criminal policing, prosecution, courts, and corrections processes. An alternative name, \"Criminal Legal System,\" (CLS) was also strongly considered for use because it is increasingly accepted as a more accurate descriptor of the processes in place. The term \"Criminal Justice System\" was ultimately selected for use because it is more widely recognized at the current time and may help users find and access the material.",
+      "Note on fines and fees: Court fees and fines, probation/parole fees, and expungement fees owed by responsible parties were not included in this analysis because there is abundant evidence that there are low rates of payment (on average $28 are collected for every $100 charged in fees and fines for PA public defense clients). These fines and fees were also excluded from calculations describing avoided costs to Responsible Parties when participating in RJC programs. Even though these costs were excluded from this financial analysis, it is important to recognize that the accumulation of these debts is a current long term consequence carried by responsible parties. (https://www.aclupa.org/sites/default/files/field_documents/fines_and_costs_report_updated_march_2021.pdf)"
+    ],
+    "rjc": [
+      "Please read the text below for information about Restorative Justice Conferencng (RJC) Program Cost Per Case calculations.",
+      "This sheet details an estimate for the AVERAGE costs associated with a Restorative Justice Conferencing (RJC) Program PER CASE. One case = one eligible responsible party (RP) referred to a RJC program by the DA's office.",
+      "RJC program cost estimates were gathered through interviews conducted with currently operating local and national RJC diversion programs.",
+      "\"Resolution\" or a \"completed case\" means that the harmed party (HP) and responsible party (RP) reached agreements and created a specific plan during a RJC and that the RP fulfilled those agreements.",
+      "\"Incomplete or unresolved cases\" involved parts of the RJC process, but did not lead to the fulfillment of agreements and the case was referred back to the Criminal Justice System (CJS).",
+      "After RJC intake evaluation, less than 3% of cases would likely be \"unresolved\" through RJC and return to the CJS after beginning an RJC process. For cases that have partial completion of RJC processes, we have included a table at the bottom of this chart that shows additive costs (parital RJC + CJS) have been accounted for when calculating the AVERAGE cost associated with an RJC program for one eligible case."
+    ],
+    "hp": [
+      "Please read the text below for information about this sheet.",
+      "All data for the \"calculations\" and \"IROI\" sheets are sourced from this sheet. Values are reasonable estimates based on the research sources and/or interviews provided.",
+      "The number of Harmed Parties (HP) can be modified as needed on this sheet in the section under \"Harmed Party Impacts Per Case.\""
+    ]
+  },
+  "landing": {
+    "intro": [
+      "This interactive model is a tool designed to perform a return on investment (ROI) cost-benefit analysis of the financial and social impacts of Restorative Justice Conferencing (RJC) Programs compared to Criminal Justice System (CJS) processes.",
+      "Data for this model was gathered through published research, interviews with restorative justice conferencing coordinators, and interviews with staff of the Philadelphia District Attorney's Office.",
+      "RJC program costs can vary slightly depending on levels of supportive casework, but costs were generally consistent across programs. CJS process costs can vary dramatically depending on the processes used (i.e. courtroom involvement, incarceration, etc.)",
+      "To reflect potential differences in CJS process costs, this model allows users to create three different scenarios (low, medium, and high cost) for calculating ROI outputs that reflect the diversity in CJS (and other) costs."
+    ],
+    "instructions": [
+      "1. This interactive model calculates Impact Return on Investment (IROI) through a cost-benefit-type analysis that compares Criminal Justice System (CJS) Programs with Restorative Justice Conferencing (RJC) Programs. The current data refers to cost and benefit values associated with reasonable estimates for Philadelphia, Pennsylvania, USA. Local values can be substituted to provide more accuracy for other jurisdictions. Current values were obtained from research and interviews; when a range was of values was reasonable, conservative values were selected to minimize any unintentional inflation of ROI values.",
+      "2. Users can adjust values for local accuracy on three sheets: CJS Program Costs, RJC Program Costs, and HP, RP, Community Inputs. Data on the calculations and IROI sheets will automatically update.  PLEASE do not change data on any sheets except the CJS Program Costes, RJC Program Costs, and HP, RP, Community Inputs sheets.",
+      "3. Sheets are sequenced in the order in which values feed into the next step. Final values from CJS Program Costs are used in calculating additive RJC Program Costs.  These program costs are linked into the \"HP, RP, Community Inputs\" sheet. All other data in \"HP, RP, Community Inputs\" was determined through research and interviews (sources provided). The \"HP, RP, Community Inputs\" sheet provides data for the avoided costs and benefits \"calculations\" sheet. These values are used in final IROI calculations provided on the \"IROI\" sheet.",
+      "4. In this model, \"HP\" refers to harmed parties and \"RP\" refers to a responsible party. Calculations are based on a PER CASE basis, in which \"one case\" is one responsible party who is eligible for referral to a RJC program (charged with an RJC eligible offense, acknowledges responsibility, and willing to participate in facilitated accountability practices). One case may have more than one harmed party. The number of harmed parties per case can be adjusted on the \"Values and Sources\" sheet under \"Harmed Party Impacts.\""
+    ],
+    "limitation": "All the costs and benefits reported here have a numerical value associated with them, but it is important to remember that some of the most meaningfrul costs and benefits are qualitative.  For example, participants in RJC report feeling more human, heard and valued.  For a more detailed analysis and many more stories, see Sered, 2019, Until We Reckon, the New Press."
   }
 }
