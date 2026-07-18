@@ -54,12 +54,20 @@ export default async function DashboardPage() {
                       </p>
                     )}
                     {c.liveVersionId && (
-                      <Link
-                        href={`/s/${c.shareSlug}`}
-                        className="inline-block mt-1 text-xs text-blue-600 hover:text-blue-800 transition-colors"
-                      >
-                        View summary →
-                      </Link>
+                      <span className="inline-flex items-center gap-3 mt-1">
+                        <Link
+                          href={`/s/${c.shareSlug}`}
+                          className="text-xs text-blue-600 hover:text-blue-800 transition-colors"
+                        >
+                          View summary →
+                        </Link>
+                        <a
+                          href={`/s/${c.shareSlug}/pdf`}
+                          className="text-xs text-blue-600 hover:text-blue-800 transition-colors"
+                        >
+                          Download PDF
+                        </a>
+                      </span>
                     )}
                   </td>
                   <td className="px-6 py-4 text-zinc-500">{c.ownerEmail}</td>

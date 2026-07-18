@@ -143,12 +143,20 @@ export default async function SummaryPage({
         </div>
       </details>
 
-      <Link
-        href={`/case/${roiCase.shareSlug}`}
-        className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
-      >
-        View full case for all inputs and sources →
-      </Link>
+      <div className="flex flex-wrap items-center gap-4">
+        <a
+          href={`/s/${roiCase.shareSlug}/pdf`}
+          className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+        >
+          Download PDF
+        </a>
+        <Link
+          href={`/case/${roiCase.shareSlug}`}
+          className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+        >
+          View full case for all inputs and sources →
+        </Link>
+      </div>
     </div>
   )
 }

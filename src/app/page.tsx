@@ -70,15 +70,24 @@ export default async function HomePage() {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
             {cases.map((c) => (
-              <Link
+              <div
                 key={c.id}
-                href={`/case/${c.shareSlug}`}
                 className="rounded-xl border border-zinc-200 bg-white p-5 hover:border-blue-300 hover:shadow-sm transition-all"
               >
-                <h3 className="font-medium text-zinc-900 mb-1">{c.title}</h3>
-                {c.summary && <p className="text-sm text-zinc-500 line-clamp-3">{c.summary}</p>}
-                <p className="mt-2 text-xs text-zinc-400">{c.ownerEmail}</p>
-              </Link>
+                <Link href={`/case/${c.shareSlug}`} className="block">
+                  <h3 className="font-medium text-zinc-900 mb-1">{c.title}</h3>
+                  {c.summary && <p className="text-sm text-zinc-500 line-clamp-3">{c.summary}</p>}
+                  <p className="mt-2 text-xs text-zinc-400">{c.ownerEmail}</p>
+                </Link>
+                <div className="mt-3 flex items-center gap-3 text-xs">
+                  <Link href={`/s/${c.shareSlug}`} className="text-blue-600 hover:text-blue-800 transition-colors">
+                    Summary →
+                  </Link>
+                  <a href={`/s/${c.shareSlug}/pdf`} className="text-blue-600 hover:text-blue-800 transition-colors">
+                    Download PDF
+                  </a>
+                </div>
+              </div>
             ))}
           </div>
         )}
