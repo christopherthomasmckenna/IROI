@@ -6,8 +6,10 @@ import { getCaseBySlug, getVersionById } from '@/lib/cases/operations'
 import { canViewCase } from '@/lib/cases/access'
 import { type CaseSnapshot, snapshotToFieldRows } from '@/lib/cases/snapshot'
 import { convertFieldsToInputs } from '@/lib/cases/convert'
+import { computeDeviations } from '@/lib/cases/deviations'
 import { calculateRoi } from '@/lib/calculator/engine'
 import { IroiSummary, IroiDerivation } from '@/components/iroi'
+import { ProvenanceBrief } from '@/components/provenance'
 
 function BlockedCta() {
   return (
@@ -66,6 +68,7 @@ export default async function SummaryPage({
   const snapshot = liveVersion.snapshot as CaseSnapshot
   const fields = snapshotToFieldRows(snapshot, roiCase.id)
   const outputs = calculateRoi(convertFieldsToInputs(fields))
+  const deviations = computeDeviations(fields)
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
@@ -84,6 +87,13 @@ export default async function SummaryPage({
       <div className="mb-8">
         <IroiSummary outputs={outputs} />
       </div>
+
+      {/* Provenance: entry date + deviations from the Philadelphia defaults */}
+      <ProvenanceBrief
+        createdAt={roiCase.createdAt}
+        publishedAt={liveVersion.publishedAt}
+        deviations={deviations}
+      />
 
       {/* The math */}
       <section className="mb-6">
