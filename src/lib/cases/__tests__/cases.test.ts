@@ -133,6 +133,32 @@ describe('snapshot round-trip (publish → view)', () => {
     expect(outputs.iroi.high).toBeCloseTo(15.336432120702682, 6)
   })
 
+  it('frozen defaults survive edit → publish → restore (the comparison baseline)', () => {
+    // Punch-list item 5: default_value is the permanent yardstick every case is
+    // compared against. Editing values, snapshotting (publish), and restoring
+    // must never disturb it.
+    const rows = buildCaseFieldRows(FAKE_CASE_ID)
+    const originalDefaults = new Map(rows.map((r) => [r.fieldKey, r.defaultValue]))
+
+    const edited = rows.map((r) =>
+      r.fieldKey === 'tax_rate' || r.fieldKey === 'rjc_row11.rate_per_unit'
+        ? { ...r, currentValue: '123.45', annotation: 'local override' }
+        : r
+    )
+
+    const snapshot = buildSnapshot('Edited', edited)
+    const restored = snapshotToFieldRows(snapshot, FAKE_CASE_ID)
+
+    for (const r of restored) {
+      expect(r.defaultValue, r.fieldKey).toBe(originalDefaults.get(r.fieldKey))
+    }
+    // The edits themselves round-trip too — current diverges, default doesn't.
+    const restoredTax = restored.find((r) => r.fieldKey === 'tax_rate')!
+    expect(restoredTax.currentValue).toBe('123.45')
+    expect(restoredTax.annotation).toBe('local override')
+    expect(Number(restoredTax.defaultValue)).not.toBe(123.45)
+  })
+
   it('detects a draft that diverges from its snapshot', () => {
     const rows = buildCaseFieldRows(FAKE_CASE_ID)
     const snapshot = buildSnapshot('Snap', rows)
