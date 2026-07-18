@@ -12,9 +12,12 @@ export function ShareButton({ slug, title }: { slug: string; title: string }) {
   const [copied, setCopied] = useState(false)
   const [url, setUrl] = useState(`/s/${slug}`)
 
-  useEffect(() => {
+  // The absolute URL needs window.location, so build it when the dialog opens
+  // (a user event — always client-side) rather than in an effect.
+  function openDialog() {
     setUrl(`${window.location.origin}/s/${slug}`)
-  }, [slug])
+    setOpen(true)
+  }
 
   useEffect(() => {
     if (!open) return
@@ -40,7 +43,7 @@ export function ShareButton({ slug, title }: { slug: string; title: string }) {
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={openDialog}
         className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs text-zinc-600 hover:bg-zinc-50 transition-colors"
       >
         Share

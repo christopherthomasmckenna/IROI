@@ -26,19 +26,13 @@ import {
   updateRjcRowAction,
   updateSplitAction,
 } from '@/app/actions/cases'
-import type { RoiOutputs, RjcScenarioBreakdown, Sensitivity } from '@/lib/calculator/types'
+import type { RjcScenarioBreakdown, Sensitivity } from '@/lib/calculator/types'
 import { SplitEditor } from './SplitEditor'
 import { InfoTip } from './InfoTip'
 import { EditableGroupedRow, EditableFieldRow } from './EditableRows'
 
 // ─── Formatting ───────────────────────────────────────────────────────────────
 
-function fmtNum(v: number): string {
-  return v.toLocaleString('en-US', { maximumFractionDigits: 4 })
-}
-function fmtIroi(v: number): string {
-  return v.toFixed(2)
-}
 function fmtUsd(v: number): string {
   return '$' + Math.round(v).toLocaleString('en-US')
 }

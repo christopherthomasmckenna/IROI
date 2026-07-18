@@ -79,6 +79,7 @@ function makeCase(overrides: Partial<RoiCase> = {}): RoiCase {
     isPrivate:     false,
     shareSlug:     'abc123',
     liveVersionId: null,
+    promotedAt:    null,
     createdAt:     new Date(),
     updatedAt:     new Date(),
     ...overrides,

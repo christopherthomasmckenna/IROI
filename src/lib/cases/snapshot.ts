@@ -20,8 +20,16 @@ export interface CaseSnapshot {
   fields: SnapshotField[]
 }
 
-/** Build a snapshot from the live draft field rows. */
-export function buildSnapshot(title: string, fields: RoiCaseField[]): CaseSnapshot {
+/** Build a snapshot from field rows (accepts both select and insert shapes). */
+export function buildSnapshot(
+  title: string,
+  fields: Array<
+    Pick<RoiCaseField, 'fieldKey' | 'sectionKey' | 'currentValue' | 'defaultValue'> & {
+      note?: string | null
+      annotation?: string | null
+    }
+  >
+): CaseSnapshot {
   return {
     title,
     fields: fields.map((f) => ({
@@ -29,8 +37,8 @@ export function buildSnapshot(title: string, fields: RoiCaseField[]): CaseSnapsh
       sectionKey:   f.sectionKey,
       currentValue: f.currentValue,
       defaultValue: f.defaultValue,
-      note:         f.note,
-      annotation:   f.annotation,
+      note:         f.note ?? null,
+      annotation:   f.annotation ?? null,
     })),
   }
 }
@@ -58,7 +66,7 @@ export function snapshotToFieldRows(snapshot: CaseSnapshot, caseId: string): Roi
  * annotations) — i.e. there are unpublished changes. Compares by fieldKey.
  */
 export function draftDiffersFromSnapshot(
-  draft: RoiCaseField[],
+  draft: Array<Pick<RoiCaseField, 'fieldKey' | 'currentValue'> & { annotation?: string | null }>,
   snapshot: CaseSnapshot
 ): boolean {
   const snapByKey = new Map(snapshot.fields.map((f) => [f.fieldKey, f]))
