@@ -1,14 +1,13 @@
 import { describe, it, expect } from 'vitest'
 import fields from '../../../../docs/roi-model-fields.json'
-import { CREATOR_EDITABLE_FIELDS, canEditField, assertCreator, assertAdmin, AuthError } from '../permissions'
+import { KNOWN_FIELD_KEYS, canEditField, isFieldPerCaseEditable, assertCreator, assertAdmin, AuthError } from '../permissions'
 
 // ─── Known totals from the JSON (change these if the model changes) ───────────
 
-const EXPECTED_CREATOR_EDITABLE_COUNT = 48  // 14 CJS units/cost + 21 CJS pct + 3 split + 10 HP/RP/Community
+const EXPECTED_FIELD_COUNT = 81 // 35 CJS + 24 RJC rows + 2 preconf + 3 split + 17 HP/RP/Community
 
 // ─── Derive all stored field keys so we can check completeness ────────────────
 
-type FieldSpec = { creator_editable: boolean }
 type RowSpec = { id: string; [sub: string]: unknown }
 
 function allStoredFieldKeys(): string[] {
@@ -16,12 +15,12 @@ function allStoredFieldKeys(): string[] {
 
   for (const row of fields.cjs_program_costs as RowSpec[]) {
     for (const sub of ['units_required', 'cost_per_unit', 'pct_low', 'pct_medium', 'pct_high']) {
-      if ((row[sub] as FieldSpec | undefined) !== undefined) keys.push(`${row.id}.${sub}`)
+      if (row[sub] !== undefined) keys.push(`${row.id}.${sub}`)
     }
   }
   for (const row of fields.rjc_program_costs as RowSpec[]) {
     for (const sub of ['hours_or_units', 'rate_per_unit']) {
-      if ((row[sub] as FieldSpec | undefined) !== undefined) keys.push(`${row.id}.${sub}`)
+      if (row[sub] !== undefined) keys.push(`${row.id}.${sub}`)
     }
   }
   const preconf = fields.rjc_preconferencing_overhead as Record<string, unknown>
@@ -42,103 +41,50 @@ function allStoredFieldKeys(): string[] {
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
-describe('CREATOR_EDITABLE_FIELDS', () => {
-  it('contains exactly the expected number of creator-editable fields', () => {
-    expect(CREATOR_EDITABLE_FIELDS.size).toBe(EXPECTED_CREATOR_EDITABLE_COUNT)
-  })
-
-  it('includes the 14 CJS units/cost fields', () => {
-    const rows = ['cjs_row13', 'cjs_row14', 'cjs_row15', 'cjs_row16', 'cjs_row17', 'cjs_row18', 'cjs_row19']
-    for (const row of rows) {
-      expect(CREATOR_EDITABLE_FIELDS.has(`${row}.units_required`), `${row}.units_required`).toBe(true)
-      expect(CREATOR_EDITABLE_FIELDS.has(`${row}.cost_per_unit`), `${row}.cost_per_unit`).toBe(true)
-    }
-  })
-
-  it('includes CJS pct_low/pct_medium/pct_high (% applicability) for all CJS rows', () => {
-    const rows = ['cjs_row13', 'cjs_row14', 'cjs_row15', 'cjs_row16', 'cjs_row17', 'cjs_row18', 'cjs_row19']
-    for (const row of rows) {
-      for (const pct of ['pct_low', 'pct_medium', 'pct_high']) {
-        expect(CREATOR_EDITABLE_FIELDS.has(`${row}.${pct}`), `${row}.${pct}`).toBe(true)
-      }
-    }
-  })
-
-  it('includes all 3 RJC outcome split fields (100% enforced at save time)', () => {
-    expect(CREATOR_EDITABLE_FIELDS.has('rjc_outcome_split.resolution_pct')).toBe(true)
-    expect(CREATOR_EDITABLE_FIELDS.has('rjc_outcome_split.preconferencing_only_pct')).toBe(true)
-    expect(CREATOR_EDITABLE_FIELDS.has('rjc_outcome_split.conferenced_unresolved_pct')).toBe(true)
-  })
-
-  it('includes the 10 creator-editable HP/RP/Community fields', () => {
-    const expected = [
-      'avg_harmed_parties_per_case',
-      'avg_restitution_per_hp',
-      'avoided_transportation_expense',
-      'avoided_loss_of_income',
-      'pct_time_expense_difference',
-      'ged_earnings_increase',
-      'pct_obtaining_ged',
-      'community_service_hours',
-      'community_service_dollar_per_hour',
-      'pct_completing_community_service',
-    ]
+describe('KNOWN_FIELD_KEYS (all-fields-editable decision, 2026-07-18)', () => {
+  it('contains every stored field key, and nothing else', () => {
+    const expected = allStoredFieldKeys()
+    expect(KNOWN_FIELD_KEYS.size).toBe(EXPECTED_FIELD_COUNT)
     for (const key of expected) {
-      expect(CREATOR_EDITABLE_FIELDS.has(key), key).toBe(true)
+      expect(KNOWN_FIELD_KEYS.has(key), key).toBe(true)
     }
   })
 
-  it('excludes locked HP/RP/Community fields', () => {
-    const locked = [
-      'pct_restitution_increase_rjc',
-      'expungement_earnings_avoided',
-      'pct_expungement_rate_increase',
-      'rp_earnings_not_incarcerated',
-      'tax_avoided_earnings',
-      'tax_rate',
-      'pct_recidivism_reduction',
-    ]
-    for (const key of locked) {
-      expect(CREATOR_EDITABLE_FIELDS.has(key), key).toBe(false)
+  it('excludes the _DUPLICATE_OF_ documentation artifacts', () => {
+    for (const key of KNOWN_FIELD_KEYS) {
+      expect(key.includes('_DUPLICATE_OF_'), key).toBe(false)
     }
-  })
-
-  it('excludes all RJC row costs (all creator_editable: false)', () => {
-    expect(CREATOR_EDITABLE_FIELDS.has('rjc_row11.hours_or_units')).toBe(false)
-    expect(CREATOR_EDITABLE_FIELDS.has('rjc_row11.rate_per_unit')).toBe(false)
   })
 })
 
-describe('canEditField', () => {
-  it('admin can edit every stored field key', () => {
+describe('canEditField / isFieldPerCaseEditable', () => {
+  it('creator and admin can edit every stored field key — including formerly locked ones', () => {
     for (const key of allStoredFieldKeys()) {
-      expect(canEditField(key, 'admin'), key).toBe(true)
+      expect(canEditField(key, 'creator'), `creator: ${key}`).toBe(true)
+      expect(canEditField(key, 'admin'), `admin: ${key}`).toBe(true)
+      expect(isFieldPerCaseEditable(key), key).toBe(true)
     }
   })
 
-  it('creator can edit creator-editable fields', () => {
-    expect(canEditField('cjs_row13.units_required', 'creator')).toBe(true)
-    expect(canEditField('avg_harmed_parties_per_case', 'creator')).toBe(true)
+  it('specifically: research constants and RJC standard rows are now editable', () => {
+    for (const key of [
+      'tax_rate',
+      'pct_recidivism_reduction',
+      'expungement_earnings_avoided',
+      'rp_earnings_not_incarcerated',
+      'rjc_row11.hours_or_units',
+      'rjc_row11.rate_per_unit',
+      'rjc_preconferencing_overhead.rate_per_unit',
+    ]) {
+      expect(canEditField(key, 'creator'), key).toBe(true)
+    }
   })
 
-  it('creator cannot edit locked fields', () => {
-    expect(canEditField('rjc_row11.hours_or_units', 'creator')).toBe(false)
-    expect(canEditField('rjc_row11.rate_per_unit', 'creator')).toBe(false)
-    expect(canEditField('tax_rate', 'creator')).toBe(false)
-  })
-
-  it('creator can edit all three outcome split fields', () => {
-    expect(canEditField('rjc_outcome_split.resolution_pct', 'creator')).toBe(true)
-    expect(canEditField('rjc_outcome_split.preconferencing_only_pct', 'creator')).toBe(true)
-    expect(canEditField('rjc_outcome_split.conferenced_unresolved_pct', 'creator')).toBe(true)
-  })
-
-  it('every stored field key resolves to a definite answer for each role', () => {
-    for (const key of allStoredFieldKeys()) {
-      const creatorResult = canEditField(key, 'creator')
-      const adminResult = canEditField(key, 'admin')
-      expect(typeof creatorResult, `creator result for ${key}`).toBe('boolean')
-      expect(typeof adminResult, `admin result for ${key}`).toBe('boolean')
+  it('rejects unknown field keys for every role', () => {
+    for (const bad of ['nonsense', 'cjs_row13.made_up', 'rjc_outcome_split.extra', '']) {
+      expect(canEditField(bad, 'creator'), bad).toBe(false)
+      expect(canEditField(bad, 'admin'), bad).toBe(false)
+      expect(isFieldPerCaseEditable(bad), bad).toBe(false)
     }
   })
 })
@@ -152,12 +98,12 @@ describe('assertCreator', () => {
   })
 
   it('does not throw for a valid creator session', () => {
-    const session = { user: { email: 'a@b.com', role: 'creator' as const }, expires: '' }
+    const session = { user: { id: 'u1', email: 'a@b.com', role: 'creator' as const }, expires: '' }
     expect(() => assertCreator(session)).not.toThrow()
   })
 
   it('does not throw for a valid admin session', () => {
-    const session = { user: { email: 'a@b.com', role: 'admin' as const }, expires: '' }
+    const session = { user: { id: 'u1', email: 'a@b.com', role: 'admin' as const }, expires: '' }
     expect(() => assertCreator(session)).not.toThrow()
   })
 })
@@ -171,7 +117,7 @@ describe('assertAdmin', () => {
   })
 
   it('throws 403 when user is a creator', () => {
-    const session = { user: { email: 'a@b.com', role: 'creator' as const }, expires: '' }
+    const session = { user: { id: 'u1', email: 'a@b.com', role: 'creator' as const }, expires: '' }
     expect(() => assertAdmin(session)).toThrow(AuthError)
     try { assertAdmin(session) } catch (e) {
       expect((e as AuthError).status).toBe(403)
@@ -179,7 +125,7 @@ describe('assertAdmin', () => {
   })
 
   it('does not throw for a valid admin session', () => {
-    const session = { user: { email: 'a@b.com', role: 'admin' as const }, expires: '' }
+    const session = { user: { id: 'u1', email: 'a@b.com', role: 'admin' as const }, expires: '' }
     expect(() => assertAdmin(session)).not.toThrow()
   })
 })

@@ -1,93 +1,89 @@
 // Field-level permission enforcement for the ROI calculator.
 //
-// The source of truth for which fields a Creator can edit is docs/roi-model-fields.json.
-// This module derives the editable set from that file at module load time so that
-// the permission check is always consistent with the field definitions.
+// DECISION (2026-07-18, punch-list item 4): every stored field is editable
+// per-case by the case's owner and by admins — including the research-derived
+// constants and the RJC standard cost rows that were previously locked. The
+// integrity control is no longer "locked fields"; it is the frozen
+// default_value baseline (snapshotted at case creation), the changed-from-
+// default flag, and the creator's annotation on every deviation.
+//
+// The `creator_editable` flags in docs/roi-model-fields.json are retained as
+// documentation of the source spreadsheet's own locks, but no longer gate
+// anything. This module now derives the set of KNOWN field keys from that
+// file, so writes are still validated against the model's real shape.
 
 import type { Session } from 'next-auth'
 import type { Role } from '@/lib/db/schema'
 import fields from '../../../docs/roi-model-fields.json'
 
-// ─── Derive creator-editable field keys from the JSON source of truth ─────────
+// ─── Derive every stored field key from the JSON source of truth ──────────────
 
-type FieldSpec = { creator_editable: boolean }
 type RowSpec = { id: string; [sub: string]: unknown }
 
-function deriveCreatorEditableFields(): Set<string> {
+function deriveKnownFieldKeys(): Set<string> {
   const keys = new Set<string>()
 
-  // CJS rows: each has units_required, cost_per_unit, pct_low, pct_medium, pct_high
+  // CJS rows: units_required, cost_per_unit, pct_low, pct_medium, pct_high
   for (const row of fields.cjs_program_costs as RowSpec[]) {
-    const subfields = ['units_required', 'cost_per_unit', 'pct_low', 'pct_medium', 'pct_high']
-    for (const sub of subfields) {
-      const spec = row[sub] as FieldSpec | undefined
-      if (spec?.creator_editable) keys.add(`${row.id}.${sub}`)
+    for (const sub of ['units_required', 'cost_per_unit', 'pct_low', 'pct_medium', 'pct_high']) {
+      if (row[sub] !== undefined) keys.add(`${row.id}.${sub}`)
     }
   }
 
-  // RJC rows: each has hours_or_units, rate_per_unit
+  // RJC rows: hours_or_units, rate_per_unit
   for (const row of fields.rjc_program_costs as RowSpec[]) {
-    const subfields = ['hours_or_units', 'rate_per_unit']
-    for (const sub of subfields) {
-      const spec = row[sub] as FieldSpec | undefined
-      if (spec?.creator_editable) keys.add(`${row.id}.${sub}`)
+    for (const sub of ['hours_or_units', 'rate_per_unit']) {
+      if (row[sub] !== undefined) keys.add(`${row.id}.${sub}`)
     }
   }
 
   // RJC preconferencing overhead
   const preconf = fields.rjc_preconferencing_overhead as Record<string, unknown>
   for (const sub of ['hours_or_units', 'rate_per_unit']) {
-    const spec = preconf[sub] as FieldSpec | undefined
-    if (spec?.creator_editable) keys.add(`rjc_preconferencing_overhead.${sub}`)
+    if (preconf[sub] !== undefined) keys.add(`rjc_preconferencing_overhead.${sub}`)
   }
 
   // RJC outcome split
   const split = fields.rjc_outcome_split as Record<string, unknown>
   for (const sub of ['resolution_pct', 'preconferencing_only_pct', 'conferenced_unresolved_pct']) {
-    const spec = split[sub] as FieldSpec | undefined
-    if (spec?.creator_editable) keys.add(`rjc_outcome_split.${sub}`)
+    if (split[sub] !== undefined) keys.add(`rjc_outcome_split.${sub}`)
   }
 
   // HP/RP/Community inputs (flat keys, no row prefix)
   // Exclude the _DUPLICATE_OF_ keys — those are JSON documentation artifacts,
   // not real stored fields (the engine references the originals twice).
   const hp = fields.hp_rp_community_inputs as Record<string, unknown>
-  for (const [fieldName, spec] of Object.entries(hp)) {
+  for (const fieldName of Object.keys(hp)) {
     if (fieldName.includes('_DUPLICATE_OF_')) continue
-    if ((spec as FieldSpec)?.creator_editable) keys.add(fieldName)
+    keys.add(fieldName)
   }
 
   return keys
 }
 
-export const CREATOR_EDITABLE_FIELDS: ReadonlySet<string> = deriveCreatorEditableFields()
+/** Every stored field key the model defines (81 as of the Philadelphia model). */
+export const KNOWN_FIELD_KEYS: ReadonlySet<string> = deriveKnownFieldKeys()
 
 // ─── Permission predicate ─────────────────────────────────────────────────────
 
 /**
- * Returns true if a user with the given role is permitted to edit the field.
- * This is the server-side gate for all field write operations.
- *
- * Note: this gates *user* edits only. The server may still write to locked
- * fields via privileged paths (e.g. admin overrides) without going through
- * this check. The RJC outcome split (all three values) is creator-editable;
- * its 100%-sum constraint is enforced separately at save time, not here.
+ * Returns true if a user with the given role may edit the field on a case they
+ * can edit. All roles may edit all known fields; unknown keys are rejected.
+ * (Whether the user may edit the CASE at all is checked separately by
+ * canEditCase/assertCanEdit.)
  */
 export function canEditField(fieldKey: string, role: Role): boolean {
-  if (role === 'admin') return true
-  return CREATOR_EDITABLE_FIELDS.has(fieldKey)
+  void role // kept in the signature for future role-scoped rules
+  return KNOWN_FIELD_KEYS.has(fieldKey)
 }
 
 /**
- * Whether a field may be edited per-case AT ALL, by anyone (creator or admin).
- * The non-creator-editable fields are fixed model constants (CJS applicability
- * %s, RJC standard costs, research-based HP/RP constants) — they are read-only
- * on every case for every role. (Admins manage such global values elsewhere,
- * not per-case.) This is intentionally stricter than canEditField, which still
- * reports admins as able to edit any field.
+ * Whether a field key is a real, per-case-editable model field. Since the
+ * all-fields-editable decision this is a validity check (does the key exist in
+ * the model), not a lock: every known field is editable; unknown keys never are.
  */
 export function isFieldPerCaseEditable(fieldKey: string): boolean {
-  return CREATOR_EDITABLE_FIELDS.has(fieldKey)
+  return KNOWN_FIELD_KEYS.has(fieldKey)
 }
 
 // ─── Authorization guards ─────────────────────────────────────────────────────
@@ -102,7 +98,7 @@ export class AuthError extends Error {
   }
 }
 
-/** Throws 401 if not authenticated; throws 403 if authenticated but not creator or admin. */
+/** Throws 401 if not authenticated. (Every authenticated user is at least a creator.) */
 export function assertCreator(session: Session | null): asserts session is Session & { user: { role: Role } } {
   if (!session?.user) throw new AuthError(401, 'Not authenticated')
 }

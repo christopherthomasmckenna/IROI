@@ -23,6 +23,7 @@ import {
 import {
   updateCaseFieldAction,
   updateCjsRowAction,
+  updateRjcRowAction,
   updateSplitAction,
 } from '@/app/actions/cases'
 import type { RoiOutputs, RjcScenarioBreakdown, Sensitivity } from '@/lib/calculator/types'
@@ -357,6 +358,7 @@ function RjcAverageBreakdown({ scenarios }: { scenarios: RjcScenarioBreakdown })
 }
 
 function RjcSection(props: SectionProps & { splitEditor: React.ReactNode; scenarios: RjcScenarioBreakdown; info: string[] }) {
+  const rjcAction = (rowId: string) => updateRjcRowAction.bind(null, props.caseId, props.caseSlug, rowId)
   return (
     <section className="mb-10 border-l-4 border-indigo-300 pl-4">
       <h2 className="text-lg font-bold text-indigo-800 mb-3 pb-2 border-b-2 border-indigo-300">
@@ -367,11 +369,12 @@ function RjcSection(props: SectionProps & { splitEditor: React.ReactNode; scenar
       <div className="space-y-3">
         {RJC_ROW_IDS.map((rowId) => (
           <GroupedRow
-            key={rowId}
+            key={`${rowId}:${rowSignature(props.fields, rowId, RJC_COLS)}`}
             rowId={rowId}
             rowLabel={RJC_ROW_META[rowId]?.label ?? rowId}
             cols={RJC_COLS}
             gridCols="grid-cols-2"
+            action={rjcAction(rowId)}
             fields={props.fields}
             role={props.role}
             canEditThisCase={props.canEditThisCase}

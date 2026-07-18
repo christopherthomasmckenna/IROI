@@ -100,6 +100,40 @@ export async function updateCjsRowAction(
   revalidatePath(`/case/${caseSlug}`)
 }
 
+export async function updateRjcRowAction(
+  caseId: string,
+  caseSlug: string,
+  rowId: string,
+  formData: FormData
+): Promise<void> {
+  const session = await getServerSession(authOptions)
+  assertCreator(session)
+
+  const num = (name: string): number => {
+    const raw = (formData.get(name) as string | null)?.trim()
+    if (!raw) throw new Error(`${name} is required`)
+    return Number(raw)
+  }
+  const updates = [
+    { fieldKey: `${rowId}.hours_or_units`, value: num('hours_or_units') },
+    { fieldKey: `${rowId}.rate_per_unit`,  value: num('rate_per_unit') },
+  ]
+
+  const annotation = formData.has('annotation')
+    ? ((formData.get('annotation') as string | null) ?? '')
+    : undefined
+
+  await updateFieldGroup(
+    caseId,
+    updates,
+    annotation,
+    `${rowId}.hours_or_units`,
+    session.user.id,
+    session.user.role
+  )
+  revalidatePath(`/case/${caseSlug}`)
+}
+
 export async function updateSplitAction(
   caseId: string,
   caseSlug: string,

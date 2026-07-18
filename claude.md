@@ -27,19 +27,21 @@ duplicate their content into this file as it evolves:
 
 ## Roles (full detail in the brief)
 - **Viewer** — anonymous, public cases only.
-- **Creator** — account; owns cases; edits only fields flagged
-  `creator_editable: true` in roi-model-fields.json; can toggle private/public
-  and share a link; can open their own private cases and any public case —
-  never another Creator's private case.
+- **Creator** — account; owns cases; edits **every field** on their own cases
+  (see decision below); can toggle private/public and share a link; can open
+  their own private cases and any public case — never another Creator's
+  private case.
 - **Admin** — everything a Creator can do, plus: full CRUD on all cases
   regardless of owner, role management at `/admin/users`, global field
   explanations, landing-page content, and case promotion.
-  - **OPEN QUESTION (spec vs code):** the brief says admins can edit *every*
-    field on any case, but the code intentionally restricts everyone — admins
-    included — to the creator-editable subset per-case (`isFieldPerCaseEditable`
-    gates all writes; the fixed model constants are read-only for all roles).
-    `canEditField()` grants admins everything but is wired into nothing.
-    Unresolved — don't "fix" either side without a product decision.
+- **DECISION (2026-07-18, resolves the earlier spec/code open question):** ALL
+  fields are per-case editable by the case owner and admins — including the
+  research-derived constants and RJC standard cost rows that were originally
+  locked. The integrity control is the frozen `default_value` baseline
+  (Philadelphia model, snapshotted at case creation), the changed-from-default
+  flag, and the creator's annotation on each deviation — not field locks.
+  The `creator_editable` flags in roi-model-fields.json are retained as
+  documentation of the source spreadsheet's locks but gate nothing.
 
 ## Data model
 `users`, `roi_cases`, `roi_case_fields`, `roi_case_versions` — see the brief for
@@ -95,8 +97,11 @@ get wrong:
 - `src/proxy.ts` — Next.js 16 proxy (renamed from middleware). Guards
   `/dashboard/*` and `/admin/*` — unauthenticated users redirect to `/login`.
 - `src/lib/auth/permissions.ts` — `canEditField(fieldKey, role)`,
-  `assertCreator(session)`, `assertAdmin(session)`. The editable field set is
-  derived at load time from `docs/roi-model-fields.json` — do not hardcode it.
+  `isFieldPerCaseEditable(fieldKey)`, `assertCreator(session)`,
+  `assertAdmin(session)`. Since the all-fields-editable decision these validate
+  that the key is a real model field (`KNOWN_FIELD_KEYS`, derived at load time
+  from `docs/roi-model-fields.json` — do not hardcode it); they no longer lock
+  any field to any role.
 - **Admin bootstrap**: no admin exists until one is promoted. To make the first
   admin, sign in via magic link then run:
   ```sql
@@ -116,7 +121,7 @@ get wrong:
 - `seed.ts` — `buildCaseFieldRows(caseId)` — 81 rows from DEFAULT_INPUTS + JSON notes
 - `convert.ts` — `convertFieldsToInputs(fields)` — fields → typed `RoiInputs` (call this before `calculateRoi`)
 - `access.ts` — `canViewCase()`, `canEditCase()`, `assertCanView()`, `assertCanEdit()`. Private cases → 404 for non-owners (don't leak existence).
-- `field-meta.ts` — `FIELD_META` map (label + note + creatorEditable per fieldKey) + `variableKeyOf()`
+- `field-meta.ts` — `FIELD_META` map (label + note per fieldKey) + `variableKeyOf()`
 - `field-units.ts` — unit adornments ($/%/unit words) and the display↔storage % conversion (stored 0–1, entered 0–100): `toStoredValue()`, `toDisplayValue()`
 - `field-explanations.ts` / `content-blocks.ts` — admin-managed global overrides for ⓘ tooltips and prose blocks; fall back to JSON defaults
 - `snapshot.ts` — `buildSnapshot()`, `snapshotToFieldRows()`, `draftDiffersFromSnapshot()`

@@ -1,38 +1,35 @@
 /**
  * Compact metadata about each stored field key, derived once at module load
- * from roi-model-fields.json.
- *
- * Provides human-readable labels and identifies which fields are creator-editable
- * (independently of the CREATOR_EDITABLE_FIELDS set in permissions.ts, which
- * should agree — this is the source for the display layer).
+ * from roi-model-fields.json. Provides human-readable labels and tooltip text.
+ * (Editability is uniform since the all-fields-editable decision — see
+ * permissions.ts — so no per-field flag lives here.)
  */
 import fieldsJson from '../../../docs/roi-model-fields.json'
 
 export interface FieldMeta {
   label: string
   note: string | null
-  creatorEditable: boolean
 }
 
 // ─── Builder helpers ──────────────────────────────────────────────────────────
 
-const CJS_SUBFIELDS: Record<string, { label: string; creatorEditable: boolean }> = {
-  units_required: { label: 'Units required',  creatorEditable: true  },
-  cost_per_unit:  { label: 'Cost per unit',   creatorEditable: true  },
-  pct_low:        { label: '% applicability — low',    creatorEditable: true },
-  pct_medium:     { label: '% applicability — medium', creatorEditable: true },
-  pct_high:       { label: '% applicability — high',   creatorEditable: true },
+const CJS_SUBFIELDS: Record<string, { label: string }> = {
+  units_required: { label: 'Units required' },
+  cost_per_unit:  { label: 'Cost per unit' },
+  pct_low:        { label: '% applicability — low' },
+  pct_medium:     { label: '% applicability — medium' },
+  pct_high:       { label: '% applicability — high' },
 }
 
-const RJC_SUBFIELDS: Record<string, { label: string; creatorEditable: boolean }> = {
-  hours_or_units: { label: 'Hours / units',  creatorEditable: false },
-  rate_per_unit:  { label: 'Rate per unit',  creatorEditable: false },
+const RJC_SUBFIELDS: Record<string, { label: string }> = {
+  hours_or_units: { label: 'Hours / units' },
+  rate_per_unit:  { label: 'Rate per unit' },
 }
 
-const SPLIT_SUBFIELDS: Record<string, { label: string; creatorEditable: boolean }> = {
-  resolution_pct:             { label: 'Full resolution %',            creatorEditable: true  },
-  preconferencing_only_pct:   { label: 'Pre-conferencing only % (→ CJS)', creatorEditable: true  },
-  conferenced_unresolved_pct: { label: 'Conferenced unresolved % (→ CJS)', creatorEditable: true  },
+const SPLIT_SUBFIELDS: Record<string, { label: string }> = {
+  resolution_pct:             { label: 'Full resolution %' },
+  preconferencing_only_pct:   { label: 'Pre-conferencing only % (→ CJS)' },
+  conferenced_unresolved_pct: { label: 'Conferenced unresolved % (→ CJS)' },
 }
 
 // ─── Row-level labels ─────────────────────────────────────────────────────────
@@ -84,11 +81,7 @@ function buildFieldMeta(): Map<string, FieldMeta> {
   for (const row of fieldsJson.cjs_program_costs as RowEntry[]) {
     const note = explain(row.label, row.notes)
     for (const [sf, sfMeta] of Object.entries(CJS_SUBFIELDS)) {
-      m.set(`${row.id}.${sf}`, {
-        label:           sfMeta.label,
-        note,
-        creatorEditable: sfMeta.creatorEditable,
-      })
+      m.set(`${row.id}.${sf}`, { label: sfMeta.label, note })
     }
   }
 
@@ -96,11 +89,7 @@ function buildFieldMeta(): Map<string, FieldMeta> {
   for (const row of fieldsJson.rjc_program_costs as RowEntry[]) {
     const note = explain(row.label, row.notes)
     for (const [sf, sfMeta] of Object.entries(RJC_SUBFIELDS)) {
-      m.set(`${row.id}.${sf}`, {
-        label:           sfMeta.label,
-        note,
-        creatorEditable: sfMeta.creatorEditable,
-      })
+      m.set(`${row.id}.${sf}`, { label: sfMeta.label, note })
     }
   }
 
@@ -108,20 +97,15 @@ function buildFieldMeta(): Map<string, FieldMeta> {
   const pco = fieldsJson.rjc_preconferencing_overhead
   const pcoNote = explain(pco.label, pco.notes)
   for (const [sf, sfMeta] of Object.entries(RJC_SUBFIELDS)) {
-    m.set(`rjc_preconferencing_overhead.${sf}`, {
-      label:           sfMeta.label,
-      note:            pcoNote,
-      creatorEditable: sfMeta.creatorEditable,
-    })
+    m.set(`rjc_preconferencing_overhead.${sf}`, { label: sfMeta.label, note: pcoNote })
   }
 
   // RJC outcome split — descriptive text is the per-row split label
   const splitNotes = fieldsJson.rjc_outcome_split.notes
   for (const [sf, sfMeta] of Object.entries(SPLIT_SUBFIELDS)) {
     m.set(`rjc_outcome_split.${sf}`, {
-      label:           sfMeta.label,
-      note:            explain(sfMeta.label, splitNotes),
-      creatorEditable: sfMeta.creatorEditable,
+      label: sfMeta.label,
+      note:  explain(sfMeta.label, splitNotes),
     })
   }
 
@@ -129,9 +113,8 @@ function buildFieldMeta(): Map<string, FieldMeta> {
   for (const [key, entry] of Object.entries(_hpJson)) {
     if (key.includes('_DUPLICATE_OF_')) continue
     m.set(key, {
-      label:           entry.label,
-      note:            explain(entry.label, entry.notes),
-      creatorEditable: entry.creator_editable,
+      label: entry.label,
+      note:  explain(entry.label, entry.notes),
     })
   }
 
