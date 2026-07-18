@@ -6,6 +6,16 @@ export default function AdminHome() {
       <h1 className="text-2xl font-semibold text-zinc-900 mb-6">Admin</h1>
       <div className="grid gap-4 sm:grid-cols-2">
         <Link
+          href="/admin/cases"
+          className="rounded-xl border border-zinc-200 bg-white p-5 hover:border-blue-300 hover:shadow-sm transition-all"
+        >
+          <h2 className="font-medium text-zinc-900 mb-1">All Cases</h2>
+          <p className="text-sm text-zinc-500">
+            Every case in the database with its author, visibility, and publish state.
+          </p>
+        </Link>
+
+        <Link
           href="/admin/fields"
           className="rounded-xl border border-zinc-200 bg-white p-5 hover:border-blue-300 hover:shadow-sm transition-all"
         >

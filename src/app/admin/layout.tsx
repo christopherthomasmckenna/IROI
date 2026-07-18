@@ -23,6 +23,9 @@ export default async function AdminLayout({
           Admin
         </Link>
         <nav className="flex items-center gap-3 text-sm">
+          <Link href="/admin/cases" className="text-zinc-500 hover:text-zinc-900 transition-colors">
+            All Cases
+          </Link>
           <Link href="/admin/fields" className="text-zinc-500 hover:text-zinc-900 transition-colors">
             Field Explanations
           </Link>

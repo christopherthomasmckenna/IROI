@@ -85,6 +85,29 @@ export async function listPublicCases(): Promise<
     .orderBy(roiCases.createdAt)
 }
 
+/** Admin: every case in the database, newest first, with the owner's email. */
+export async function listAllCases(): Promise<
+  Array<RoiCase & { ownerEmail: string | null }>
+> {
+  return db
+    .select({
+      id:            roiCases.id,
+      ownerId:       roiCases.ownerId,
+      title:         roiCases.title,
+      summary:       roiCases.summary,
+      isPrivate:     roiCases.isPrivate,
+      shareSlug:     roiCases.shareSlug,
+      liveVersionId: roiCases.liveVersionId,
+      promotedAt:    roiCases.promotedAt,
+      createdAt:     roiCases.createdAt,
+      updatedAt:     roiCases.updatedAt,
+      ownerEmail:    users.email,
+    })
+    .from(roiCases)
+    .innerJoin(users, eq(roiCases.ownerId, users.id))
+    .orderBy(desc(roiCases.createdAt))
+}
+
 /**
  * Cases promoted to the public landing page: promoted AND public AND published.
  * The extra public+published gate is essential — a case can be promoted and
