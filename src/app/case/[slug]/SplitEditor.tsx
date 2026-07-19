@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { InfoTip } from './InfoTip'
 import { AdornedInput } from './EditableRows'
 
 // Mirror of SPLIT_SUM_TOLERANCE (server) expressed in percentage points.
@@ -13,7 +12,8 @@ interface SplitEditorProps {
   // Current values as percentages (0–100)
   initial: { resolution: number; preconf: number; conf: number }
   editable: boolean
-  note?: string | null
+  // Server-rendered hint + guidance disclosure (see components/guidance.tsx)
+  guidance?: React.ReactNode
   // The split's single shared annotation (creator's note for the whole split)
   initialAnnotation?: string | null
 }
@@ -28,7 +28,7 @@ export function SplitEditor({
   action,
   initial,
   editable,
-  note,
+  guidance,
   initialAnnotation,
 }: SplitEditorProps) {
   const [resolution, setResolution] = useState(String(initial.resolution))
@@ -52,9 +52,9 @@ export function SplitEditor({
   const atHundred = allValid && Math.abs(total - 100) <= TOLERANCE_PCT
 
   const header = (
-    <div className="flex items-start gap-1.5 mb-1.5">
-      <InfoTip text={note} />
+    <div className="mb-1.5">
       <span className="text-sm font-semibold text-zinc-600">Case Outcome Split</span>
+      {guidance}
     </div>
   )
 

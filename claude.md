@@ -123,7 +123,7 @@ get wrong:
 - `access.ts` — `canViewCase()`, `canEditCase()`, `assertCanView()`, `assertCanEdit()`. Private cases → 404 for non-owners (don't leak existence).
 - `field-meta.ts` — `FIELD_META` map (label + note per fieldKey) + `variableKeyOf()`
 - `field-units.ts` — unit adornments ($/%/unit words) and the display↔storage % conversion (stored 0–1, entered 0–100): `toStoredValue()`, `toDisplayValue()`
-- `field-explanations.ts` / `content-blocks.ts` — admin-managed global overrides for ⓘ tooltips and prose blocks; fall back to JSON defaults
+- `field-guidance.ts` / `content-blocks.ts` — admin-managed global content; guidance falls back to JSON defaults
 - `snapshot.ts` — `buildSnapshot()`, `snapshotToFieldRows()`, `draftDiffersFromSnapshot()`
 - `operations.ts` — case CRUD (`createCase()`, `getCaseBySlug()`, `getCaseFields()`, `listMyCases()`, `listPublicCases()`, `listPromotedCases()`, `updateCaseMeta()`, `deleteCase()`), field writes (`updateCaseField()`, `updateFieldGroup()`, `updateSplit()`), publish/versions (`publishCase()`, `restoreVersion()`, `listVersions()`, `getVersion()`, `getVersionById()`), admin (`setCasePromoted()`)
 
@@ -145,9 +145,25 @@ The three split fields cannot be written individually — `updateCaseField` reje
 ## Admin screens (step 6 complete)
 - `/admin/*` gate: `src/app/admin/layout.tsx` checks `role === 'admin'` server-side; non-admins get 404 (proxy only checks cookie presence).
 - `/admin/users` — role management. `setUserRole()` (src/lib/users.ts) enforces the last-admin rule atomically in the WHERE clause; the action also blocks changing your own role.
-- `/admin/fields` — global ⓘ explanation overrides (`field_explanations`).
+- `/admin/fields` — global field guidance (`field_explanations` table).
 - `/admin/content` — landing-page / section prose overrides (`content_blocks`).
 - `/admin/promote` — feature cases on the public landing page (`promoted_at`; shown only while also public + published).
+
+## Field guidance (GOV.UK-style help, replaces the ⓘ tooltips — 2026-07-18)
+Per docs/research/tooltips.md (Option A). Each model variable carries four
+layers, admin-authored in `field_explanations`: `short_hint` (always-visible
+one-liner), `meaning` (markdown; DB column is still named `explanation` — it
+inherited the old tooltip data; falls back to the JSON-derived default),
+`how_to_localize`, `provenance` (both markdown, hidden until authored).
+- `src/lib/cases/field-meta.ts` — `FieldGuidance` type + pure `resolveGuidance()`
+  (kept DB-free for tests/clients); `src/lib/cases/field-guidance.ts` — DB
+  read/upsert. field-explanations.ts and InfoTip.tsx are gone.
+- `src/components/guidance.tsx` — `FieldHint` (aria-describedby target) +
+  `GuidanceDisclosure` (native `<details>` "About this input"), markdown via
+  react-markdown.
+- `/admin/fields` — per-variable structured editor with markdown + live preview
+  (`GuidanceEditor.tsx`). Clearing all four fields reverts the variable to
+  defaults.
 
 ## Next.js 16 notes
 - The route-protection file is `src/proxy.ts` (not `middleware.ts` — Next.js 16

@@ -132,18 +132,27 @@ export const roiCaseVersions = pgTable(
 // ─── Field Explanations (admin-managed, global) ───────────────────────────────
 
 /**
- * Admin-edited overrides for the ⓘ tooltip explanations, keyed by a logical
- * "variable" key (see variableKeyOf() in field-meta.ts — a CJS/RJC cost-line
- * row, an outcome-split outcome, or an HP/RP/Community field). These are GLOBAL:
- * one canonical explanation per variable, applied to every case. A row exists
- * only when an admin has overridden the default explanation from the JSON; the
- * tooltip falls back to the JSON default when there's no row here.
+ * Admin-edited guidance per model variable (see variableKeyOf() in
+ * field-meta.ts — a CJS/RJC cost-line row, an outcome-split outcome, or an
+ * HP/RP/Community field). GLOBAL: one guidance entry per variable, applied to
+ * every case. Structured into layers (GOV.UK-style help, 2026-07-18):
+ *   short_hint      — one always-visible sentence under the label (plain text)
+ *   meaning         — what this input means (markdown). Column is named
+ *                     `explanation` in the DB — it inherited the pre-guidance
+ *                     tooltip override data; only the TS property was renamed.
+ *   how_to_localize — how to find your jurisdiction's value (markdown)
+ *   provenance      — where the Philadelphia default comes from (markdown)
+ * A row exists only when an admin has authored something; rendering falls back
+ * to the JSON-derived default for `meaning` and omits the other layers.
  */
 export const fieldExplanations = pgTable('field_explanations', {
-  variableKey: text('variable_key').primaryKey(),
-  explanation: text('explanation').notNull(),
-  updatedBy:   uuid('updated_by').references(() => users.id),
-  updatedAt:   timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  variableKey:   text('variable_key').primaryKey(),
+  shortHint:     text('short_hint'),
+  meaning:       text('explanation'),
+  howToLocalize: text('how_to_localize'),
+  provenance:    text('provenance'),
+  updatedBy:     uuid('updated_by').references(() => users.id),
+  updatedAt:     timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 })
 
 /**

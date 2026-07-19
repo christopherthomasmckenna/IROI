@@ -4,23 +4,32 @@ import { revalidatePath } from 'next/cache'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/auth'
 import { assertAdmin } from '@/lib/auth/permissions'
-import { upsertFieldExplanation } from '@/lib/cases/field-explanations'
+import { upsertFieldGuidance } from '@/lib/cases/field-guidance'
 import { setUserRole } from '@/lib/users'
 import { setCasePromoted } from '@/lib/cases/operations'
 import { upsertContentBlock } from '@/lib/cases/content-blocks'
 import type { Role } from '@/lib/db/schema'
 
-export async function updateFieldExplanationAction(
+export async function updateFieldGuidanceAction(
   variableKey: string,
   formData: FormData
 ): Promise<void> {
   const session = await getServerSession(authOptions)
   assertAdmin(session)
 
-  const explanation = (formData.get('explanation') as string | null) ?? ''
-  await upsertFieldExplanation(variableKey, explanation, session.user.id)
+  const val = (name: string) => (formData.get(name) as string | null) ?? null
+  await upsertFieldGuidance(
+    variableKey,
+    {
+      shortHint:     val('short_hint'),
+      meaning:       val('meaning'),
+      howToLocalize: val('how_to_localize'),
+      provenance:    val('provenance'),
+    },
+    session.user.id
+  )
 
-  // Case pages are dynamic and re-read explanations on each request, so they
+  // Case pages are dynamic and re-read guidance on each request, so they
   // pick this up automatically. Revalidate the admin screen itself.
   revalidatePath('/admin/fields')
 }

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { InfoTip } from './InfoTip'
 import type { Adornment } from '@/lib/cases/field-units'
 
 // Client editable rows. Plain serializable props only (no Maps / function
@@ -32,11 +31,13 @@ export function AdornedInput({
   value,
   onChange,
   adornment,
+  describedBy,
 }: {
   name: string
   value: string
   onChange: (v: string) => void
   adornment: Adornment
+  describedBy?: string
 }) {
   const { prefix, suffix } = adornment
   return (
@@ -50,6 +51,7 @@ export function AdornedInput({
         type="number"
         step="any"
         value={value}
+        aria-describedby={describedBy}
         onChange={(e) => onChange(e.target.value)}
         style={{ width: `${Math.max(2, value.length) + 1}ch` }}
         className="min-w-0 max-w-full bg-transparent p-0 text-right text-sm text-zinc-900 tabular-nums
@@ -66,34 +68,30 @@ export interface EditableCol {
   adornment: Adornment
 }
 
+/**
+ * The editable grid + annotation + save for a grouped cost line. Card chrome,
+ * title, hint, and guidance disclosure are rendered by the server-side
+ * GroupedRow wrapper (CaseView) — this component is only the form.
+ */
 export function EditableGroupedRow({
   action,
-  rowLabel,
-  note,
   cols,
   annotation,
-  modified,
   gridCols,
+  describedBy,
 }: {
   action: (formData: FormData) => void
-  rowLabel: string
-  note: string | null
   cols: EditableCol[]
   annotation: string
-  modified: boolean
   gridCols: string
+  describedBy?: string
 }) {
   const [vals, setVals] = useState(() => cols.map((c) => String(c.value)))
   const [ann, setAnn] = useState(annotation)
   const dirty = vals.some((v, i) => v !== String(cols[i].value)) || ann !== annotation
 
   return (
-    <form action={action} className="rounded-lg border border-zinc-100 bg-white px-4 pt-3 pb-2">
-      <div className="flex items-start gap-1.5 mb-1.5">
-        <InfoTip text={note} />
-        <span className="text-sm text-zinc-700 leading-5">{rowLabel}</span>
-        {modified && <span className="text-xs text-amber-600 mt-0.5" title="Changed from default">●</span>}
-      </div>
+    <form action={action}>
       <div className={`grid ${gridCols} gap-2`}>
         {cols.map((c, i) => (
           <AdornedInput
@@ -102,6 +100,7 @@ export function EditableGroupedRow({
             value={vals[i]}
             onChange={(v) => setVals((prev) => prev.map((x, j) => (j === i ? v : x)))}
             adornment={c.adornment}
+            describedBy={describedBy}
           />
         ))}
       </div>
@@ -160,12 +159,14 @@ export function EditableFieldRow({
   annotation,
   modified,
   adornment,
+  describedBy,
 }: {
   action: (formData: FormData) => void
   value: string
   annotation: string
   modified: boolean
   adornment: Adornment
+  describedBy?: string
 }) {
   const [val, setVal] = useState(value)
   const [ann, setAnn] = useState(annotation)
@@ -174,7 +175,7 @@ export function EditableFieldRow({
   return (
     <form action={action} className="flex items-start gap-2 flex-1 min-w-0">
       <div className="w-28 shrink-0">
-        <AdornedInput name="value" value={val} onChange={setVal} adornment={adornment} />
+        <AdornedInput name="value" value={val} onChange={setVal} adornment={adornment} describedBy={describedBy} />
       </div>
       <input
         name="annotation"

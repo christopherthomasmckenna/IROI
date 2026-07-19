@@ -218,17 +218,35 @@ export function variableKeyOf(fieldKey: string): string {
   return dot === -1 ? fieldKey : fieldKey.slice(0, dot)
 }
 
+// ─── Layered guidance: types + pure resolution ────────────────────────────────
+// (DB reads/writes live in field-guidance.ts; these are here so tests and
+// client components can use them without pulling in the database client.)
+
+export interface FieldGuidance {
+  shortHint: string | null
+  meaning: string | null
+  howToLocalize: string | null
+  provenance: string | null
+}
+
+export type GuidanceMap = ReadonlyMap<string, FieldGuidance>
+
 /**
- * The effective ⓘ explanation for a field: an admin override (keyed by variable)
- * if present, else the JSON-derived default from FIELD_META.
+ * The effective guidance for a stored field key: authored layers from the DB,
+ * with `meaning` falling back to the JSON-derived default (spreadsheet label +
+ * notes / curated field_tooltips) so every field always explains itself.
  */
-export function resolveExplanation(
+export function resolveGuidance(
   fieldKey: string,
-  overrides?: ReadonlyMap<string, string>
-): string | null {
-  const override = overrides?.get(variableKeyOf(fieldKey))
-  if (override != null) return override
-  return FIELD_META.get(fieldKey)?.note ?? null
+  guidance: GuidanceMap | undefined
+): FieldGuidance {
+  const g = guidance?.get(variableKeyOf(fieldKey))
+  return {
+    shortHint:     g?.shortHint ?? null,
+    meaning:       g?.meaning ?? FIELD_META.get(fieldKey)?.note ?? null,
+    howToLocalize: g?.howToLocalize ?? null,
+    provenance:    g?.provenance ?? null,
+  }
 }
 
 export type SectionLabel = 'CJS Program Costs' | 'RJC Program Costs' | 'HP / RP / Community'

@@ -1,6 +1,7 @@
-import { getFieldExplanations } from '@/lib/cases/field-explanations'
+import { getFieldGuidance } from '@/lib/cases/field-guidance'
 import { FIELD_VARIABLES, type SectionLabel } from '@/lib/cases/field-meta'
-import { updateFieldExplanationAction } from '@/app/actions/admin'
+import { updateFieldGuidanceAction } from '@/app/actions/admin'
+import { GuidanceEditor } from './GuidanceEditor'
 
 const SECTIONS: SectionLabel[] = [
   'CJS Program Costs',
@@ -9,15 +10,17 @@ const SECTIONS: SectionLabel[] = [
 ]
 
 export default async function AdminFieldsPage() {
-  const overrides = await getFieldExplanations()
+  const guidance = await getFieldGuidance()
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-zinc-900 mb-1">Field Explanations</h1>
+      <h1 className="text-2xl font-semibold text-zinc-900 mb-1">Field Guidance</h1>
       <p className="text-sm text-zinc-500 mb-8 max-w-2xl">
-        These power the ⓘ tooltips on every case. Edit and save to change one
-        globally. Clear a box and save to revert it to the default from the model
-        definition.
+        Each model input carries layered help shown on every case: a one-line hint
+        under the label, plus an expandable &ldquo;About this input&rdquo; with what it means,
+        how to find a local value, and where the Philadelphia default comes from.
+        Markdown works in the long fields (links, <strong>bold</strong>, lists).
+        Clear all four boxes and save to revert a variable to its defaults.
       </p>
 
       {SECTIONS.map((section) => {
@@ -29,43 +32,22 @@ export default async function AdminFieldsPage() {
             </h2>
             <div className="space-y-4">
               {vars.map((v) => {
-                const overridden = overrides.has(v.variableKey)
-                const current = overrides.get(v.variableKey) ?? v.defaultExplanation ?? ''
-                const action = updateFieldExplanationAction.bind(null, v.variableKey)
+                const g = guidance.get(v.variableKey)
                 return (
-                  <form
+                  <GuidanceEditor
                     key={v.variableKey}
-                    action={action}
-                    className="rounded-lg border border-zinc-100 bg-white px-4 py-3"
-                  >
-                    <div className="flex items-center justify-between gap-3 mb-2">
-                      <span className="text-sm font-medium text-zinc-700">{v.label}</span>
-                      <span
-                        className={`shrink-0 rounded-full px-2 py-0.5 text-xs ${
-                          overridden ? 'bg-blue-50 text-blue-700' : 'bg-zinc-100 text-zinc-400'
-                        }`}
-                      >
-                        {overridden ? 'custom' : 'default'}
-                      </span>
-                    </div>
-                    <textarea
-                      name="explanation"
-                      rows={3}
-                      defaultValue={current}
-                      className="w-full resize-y rounded border border-zinc-200 px-2 py-1.5 text-sm
-                                 text-zinc-700 focus:outline-none focus:ring-1 focus:ring-blue-500
-                                 focus:border-blue-500"
-                    />
-                    <div className="mt-2 flex items-center gap-2">
-                      <button
-                        type="submit"
-                        className="rounded bg-zinc-100 px-2.5 py-1 text-xs text-zinc-600 hover:bg-zinc-200 transition-colors"
-                      >
-                        Save
-                      </button>
-                      <span className="text-xs text-zinc-300 font-mono">{v.variableKey}</span>
-                    </div>
-                  </form>
+                    variableKey={v.variableKey}
+                    label={v.label}
+                    hasRow={guidance.has(v.variableKey)}
+                    defaultMeaning={v.defaultExplanation}
+                    initial={{
+                      shortHint:     g?.shortHint ?? '',
+                      meaning:       g?.meaning ?? '',
+                      howToLocalize: g?.howToLocalize ?? '',
+                      provenance:    g?.provenance ?? '',
+                    }}
+                    action={updateFieldGuidanceAction.bind(null, v.variableKey)}
+                  />
                 )
               })}
             </div>

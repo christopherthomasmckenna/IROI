@@ -9,9 +9,9 @@ import {
   RJC_ROW_IDS,
   RJC_ROW_META,
   HP_SUBSECTIONS,
-  resolveExplanation,
 } from '@/lib/cases/field-meta'
-import { getFieldExplanations } from '@/lib/cases/field-explanations'
+import { type GuidanceMap, getFieldGuidance, resolveGuidance } from '@/lib/cases/field-guidance'
+import { FieldHint, GuidanceDisclosure, hintIdOf } from '@/components/guidance'
 import { resolveParagraphs } from '@/lib/cases/content'
 import { getContentBlocks } from '@/lib/cases/content-blocks'
 import { IroiSummary } from '@/components/iroi'
@@ -28,7 +28,6 @@ import {
 } from '@/app/actions/cases'
 import type { RjcScenarioBreakdown, Sensitivity } from '@/lib/calculator/types'
 import { SplitEditor } from './SplitEditor'
-import { InfoTip } from './InfoTip'
 import { EditableGroupedRow, EditableFieldRow } from './EditableRows'
 
 // ─── Formatting ───────────────────────────────────────────────────────────────
@@ -109,22 +108,23 @@ interface SectionProps {
   caseSlug: string
   role: Role | null
   canEditThisCase: boolean
-  explanations: ReadonlyMap<string, string>
+  guidance: GuidanceMap
 }
 
-function FieldRow({ field, caseId, caseSlug, role, canEditThisCase, explanations }: SectionProps & { field: RoiCaseField }) {
+function FieldRow({ field, caseId, caseSlug, role, canEditThisCase, guidance }: SectionProps & { field: RoiCaseField }) {
   const meta = FIELD_META.get(field.fieldKey)
   const label = meta?.label ?? field.fieldKey
-  const note = resolveExplanation(field.fieldKey, explanations) ?? undefined
+  const g = resolveGuidance(field.fieldKey, guidance)
   const userCanEdit = canEditThisCase && !!role && isFieldPerCaseEditable(field.fieldKey)
   const modified = Number(field.currentValue) !== Number(field.defaultValue)
   const updateAction = updateCaseFieldAction.bind(null, caseId, caseSlug, field.fieldKey)
 
   return (
     <div className="flex items-start gap-3 py-2 border-b border-zinc-50 last:border-0">
-      <div className="w-56 shrink-0 text-sm text-zinc-700 leading-5 flex items-start gap-1.5">
-        <InfoTip text={note} />
+      <div className="w-56 shrink-0 text-sm text-zinc-700 leading-5">
         <span>{label}</span>
+        <FieldHint variableKey={field.fieldKey} hint={g.shortHint} />
+        <GuidanceDisclosure guidance={g} compact />
       </div>
 
       {userCanEdit ? (
@@ -134,6 +134,7 @@ function FieldRow({ field, caseId, caseSlug, role, canEditThisCase, explanations
           annotation={field.annotation ?? ''}
           modified={modified}
           adornment={adornmentOf(field.fieldKey)}
+          describedBy={g.shortHint ? hintIdOf(field.fieldKey) : undefined}
         />
       ) : (
         <div className="flex items-start gap-3 flex-1 min-w-0">
@@ -188,7 +189,7 @@ function GroupedRow({
   fields,
   role,
   canEditThisCase,
-  explanations,
+  guidance,
 }: {
   rowId: string
   rowLabel: string
@@ -198,9 +199,9 @@ function GroupedRow({
   fields: Map<string, RoiCaseField>
   role: Role | null
   canEditThisCase: boolean
-  explanations: ReadonlyMap<string, string>
+  guidance: GuidanceMap
 }) {
-  const note = resolveExplanation(`${rowId}.${cols[0].name}`, explanations) ?? undefined
+  const g = resolveGuidance(`${rowId}.${cols[0].name}`, guidance)
   const editable =
     canEditThisCase && !!role && !!action && cols.every((c) => isFieldPerCaseEditable(`${rowId}.${c.name}`))
   const cellNum = (c: ColSpec): number => {
@@ -214,40 +215,36 @@ function GroupedRow({
   const annotation =
     cols.map((c) => fields.get(`${rowId}.${c.name}`)?.annotation).find((a) => a && a.trim()) ?? ''
 
-  const title = (
-    <div className="flex items-start gap-1.5 mb-1.5">
-      <InfoTip text={note} />
-      <span className="text-sm text-zinc-700 leading-5">{rowLabel}</span>
-      {modified && <span className="text-xs text-amber-600 mt-0.5" title="Changed from default">●</span>}
-    </div>
-  )
-
-  if (!editable) {
-    return (
-      <div className="rounded-lg border border-zinc-100 bg-white px-4 pt-3 pb-2">
-        {title}
-        <div className={`grid ${gridCols} gap-2`}>
-          {cols.map((c) => (
-            <span key={c.name} className="min-w-0 text-sm text-zinc-900 text-right tabular-nums pr-2">
-              {formatWithUnit(Number(fields.get(`${rowId}.${c.name}`)?.currentValue ?? 0), `${rowId}.${c.name}`)}
-            </span>
-          ))}
-        </div>
-        {annotation && <p className="mt-2 text-sm text-zinc-400 italic">{annotation}</p>}
-      </div>
-    )
-  }
-
   return (
-    <EditableGroupedRow
-      action={action!}
-      rowLabel={rowLabel}
-      note={note ?? null}
-      cols={cols.map((c) => ({ name: c.name, value: cellNum(c), adornment: adornmentOf(`${rowId}.${c.name}`) }))}
-      annotation={annotation}
-      modified={modified}
-      gridCols={gridCols}
-    />
+    <div className="rounded-lg border border-zinc-100 bg-white px-4 pt-3 pb-2">
+      <div className="flex items-start gap-1.5 mb-1">
+        <span className="text-sm text-zinc-700 leading-5">{rowLabel}</span>
+        {modified && <span className="text-xs text-amber-600 mt-0.5" title="Changed from default">●</span>}
+      </div>
+      <FieldHint variableKey={rowId} hint={g.shortHint} />
+      <GuidanceDisclosure guidance={g} />
+
+      {editable ? (
+        <EditableGroupedRow
+          action={action!}
+          cols={cols.map((c) => ({ name: c.name, value: cellNum(c), adornment: adornmentOf(`${rowId}.${c.name}`) }))}
+          annotation={annotation}
+          gridCols={gridCols}
+          describedBy={g.shortHint ? hintIdOf(rowId) : undefined}
+        />
+      ) : (
+        <>
+          <div className={`grid ${gridCols} gap-2`}>
+            {cols.map((c) => (
+              <span key={c.name} className="min-w-0 text-sm text-zinc-900 text-right tabular-nums pr-2">
+                {formatWithUnit(Number(fields.get(`${rowId}.${c.name}`)?.currentValue ?? 0), `${rowId}.${c.name}`)}
+              </span>
+            ))}
+          </div>
+          {annotation && <p className="mt-2 text-sm text-zinc-400 italic">{annotation}</p>}
+        </>
+      )}
+    </div>
   )
 }
 
@@ -290,7 +287,7 @@ function CjsSection(props: SectionProps & { subtotal: Sensitivity<number>; info:
             fields={props.fields}
             role={props.role}
             canEditThisCase={props.canEditThisCase}
-            explanations={props.explanations}
+            guidance={props.guidance}
           />
         ))}
       </div>
@@ -372,7 +369,7 @@ function RjcSection(props: SectionProps & { splitEditor: React.ReactNode; scenar
             fields={props.fields}
             role={props.role}
             canEditThisCase={props.canEditThisCase}
-            explanations={props.explanations}
+            guidance={props.guidance}
           />
         ))}
       </div>
@@ -427,7 +424,7 @@ function HpSection(
                     caseSlug={props.caseSlug}
                     role={props.role}
                     canEditThisCase={props.canEditThisCase}
-                    explanations={props.explanations}
+                    guidance={props.guidance}
                   />
                 )
               })}
@@ -462,7 +459,7 @@ export async function CaseView({
 }: CaseViewProps) {
   const fieldMap = new Map(fields.map((f) => [f.fieldKey, f]))
   const outputs = calculateRoi(convertFieldsToInputs(fields))
-  const explanations = await getFieldExplanations()
+  const guidance = await getFieldGuidance()
   const content = await getContentBlocks()
 
   const sectionProps: SectionProps = {
@@ -471,15 +468,21 @@ export async function CaseView({
     caseSlug,
     role,
     canEditThisCase: editable,
-    explanations,
+    guidance,
   }
 
+  const splitGuidance = resolveGuidance('rjc_outcome_split.resolution_pct', guidance)
   const splitAction = updateSplitAction.bind(null, caseId, caseSlug)
   const splitEditor = (
     <SplitEditor
       action={splitAction}
       editable={editable}
-      note={resolveExplanation('rjc_outcome_split.resolution_pct', explanations)}
+      guidance={
+        <>
+          <FieldHint variableKey="rjc_outcome_split" hint={splitGuidance.shortHint} />
+          <GuidanceDisclosure guidance={splitGuidance} />
+        </>
+      }
       initialAnnotation={fieldMap.get('rjc_outcome_split.resolution_pct')?.annotation ?? null}
       initial={{
         resolution: pctToDisplay(Number(fieldMap.get('rjc_outcome_split.resolution_pct')?.currentValue ?? 0)),
