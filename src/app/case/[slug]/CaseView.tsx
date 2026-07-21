@@ -120,34 +120,38 @@ function FieldRow({ field, caseId, caseSlug, role, canEditThisCase, guidance }: 
   const updateAction = updateCaseFieldAction.bind(null, caseId, caseSlug, field.fieldKey)
 
   return (
-    <div className="flex items-start gap-3 py-2 border-b border-zinc-50 last:border-0">
-      <div className="w-56 shrink-0 text-sm text-zinc-700 leading-5">
-        <span>{label}</span>
-        <FieldHint variableKey={field.fieldKey} hint={g.shortHint} />
-        <GuidanceDisclosure guidance={g} compact />
+    <div className="py-2 border-b border-zinc-50 last:border-0">
+      <div className="flex items-start gap-3">
+        <div className="w-56 shrink-0 text-sm text-zinc-700 leading-5">
+          <span>{label}</span>
+          <FieldHint variableKey={field.fieldKey} hint={g.shortHint} />
+        </div>
+
+        {userCanEdit ? (
+          <EditableFieldRow
+            action={updateAction}
+            value={String(toDisplayValue(Number(field.currentValue), field.fieldKey))}
+            annotation={field.annotation ?? ''}
+            modified={modified}
+            adornment={adornmentOf(field.fieldKey)}
+            describedBy={g.shortHint ? hintIdOf(field.fieldKey) : undefined}
+          />
+        ) : (
+          <div className="flex items-start gap-3 flex-1 min-w-0">
+            <span className="w-28 shrink-0 text-sm text-zinc-900 text-right tabular-nums">
+              {formatWithUnit(Number(field.currentValue), field.fieldKey)}
+            </span>
+            {field.annotation && (
+              <span className="flex-1 min-w-0 text-sm text-zinc-400 italic truncate" title={field.annotation}>
+                {field.annotation}
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
-      {userCanEdit ? (
-        <EditableFieldRow
-          action={updateAction}
-          value={String(toDisplayValue(Number(field.currentValue), field.fieldKey))}
-          annotation={field.annotation ?? ''}
-          modified={modified}
-          adornment={adornmentOf(field.fieldKey)}
-          describedBy={g.shortHint ? hintIdOf(field.fieldKey) : undefined}
-        />
-      ) : (
-        <div className="flex items-start gap-3 flex-1 min-w-0">
-          <span className="w-28 shrink-0 text-sm text-zinc-900 text-right tabular-nums">
-            {formatWithUnit(Number(field.currentValue), field.fieldKey)}
-          </span>
-          {field.annotation && (
-            <span className="flex-1 min-w-0 text-sm text-zinc-400 italic truncate" title={field.annotation}>
-              {field.annotation}
-            </span>
-          )}
-        </div>
-      )}
+      {/* Full row width — the w-56 label cell squeezed this into one column */}
+      <GuidanceDisclosure guidance={g} compact />
     </div>
   )
 }

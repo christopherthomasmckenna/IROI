@@ -43,6 +43,14 @@ describe('resolveGuidance', () => {
     expect(g.shortHint).toBe(authored.shortHint)             // authored, no fallback
   })
 
+  it('normalizes Note/Source headings to bold plural, without double-wrapping', async () => {
+    const { normalizeGuidanceText } = await import('@/components/guidance')
+    expect(normalizeGuidanceText('Note: abc Source: xyz')).toBe('**Notes:** abc **Sources:** xyz')
+    expect(normalizeGuidanceText('Notes: abc Sources: xyz')).toBe('**Notes:** abc **Sources:** xyz')
+    expect(normalizeGuidanceText('**Notes:** already bold')).toBe('**Notes:** already bold')
+    expect(normalizeGuidanceText('Range: 0-10 Notes: hi')).toBe('Range: 0-10 **Notes:** hi')
+  })
+
   it('split fields are their own variables; CJS/RJC subfields collapse to rows', () => {
     expect(variableKeyOf('rjc_outcome_split.resolution_pct')).toBe('rjc_outcome_split.resolution_pct')
     expect(variableKeyOf('cjs_row13.pct_low')).toBe('cjs_row13')

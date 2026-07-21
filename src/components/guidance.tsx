@@ -1,4 +1,5 @@
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import type { FieldGuidance } from '@/lib/cases/field-meta'
 
 /**
@@ -21,8 +22,25 @@ const MD_COMPONENTS = {
   ),
 }
 
+/**
+ * House style for guidance text: the spreadsheet-derived content mixes
+ * "Note:" / "Notes:" / "Source:" / "Sources:" — normalize all to the plural
+ * and bold them. Skips occurrences already wrapped in markdown bold so
+ * admin-authored `**Notes:**` doesn't double-wrap.
+ */
+export function normalizeGuidanceText(text: string): string {
+  return text
+    .replace(/(?<!\*)\bNotes?:/g, '**Notes:**')
+    .replace(/(?<!\*)\bSources?:/g, '**Sources:**')
+}
+
 export function Markdown({ text }: { text: string }) {
-  return <ReactMarkdown components={MD_COMPONENTS}>{text}</ReactMarkdown>
+  // remark-gfm turns bare URLs into links (plus tables/strikethrough).
+  return (
+    <ReactMarkdown components={MD_COMPONENTS} remarkPlugins={[remarkGfm]}>
+      {normalizeGuidanceText(text)}
+    </ReactMarkdown>
+  )
 }
 
 /** DOM-id-safe version of a variable key, for aria-describedby wiring. */
