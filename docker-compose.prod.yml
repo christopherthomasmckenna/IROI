@@ -1,0 +1,71 @@
+# Production stack: Caddy (TLS) → app (Next standalone) → db (Postgres).
+#
+# First deploy / after schema changes:
+#   docker compose -f docker-compose.prod.yml build
+#   docker compose -f docker-compose.prod.yml run --rm migrate
+#   docker compose -f docker-compose.prod.yml up -d
+#
+# Configuration comes from .env.production (see .env.production.example).
+# Postgres is NOT exposed to the host — only the app reaches it.
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: iroi
+      POSTGRES_USER: iroi
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in .env.production}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U iroi"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    build:
+      context: .
+      target: migrate
+    profiles: ["tools"]   # runs only via `compose run --rm migrate`, not `up`
+    environment:
+      DATABASE_URL: postgres://iroi:${POSTGRES_PASSWORD}@db:5432/iroi
+    depends_on:
+      db:
+        condition: service_healthy
+
+  app:
+    build:
+      context: .
+      target: runner
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://iroi:${POSTGRES_PASSWORD}@db:5432/iroi
+      NEXTAUTH_URL: ${NEXTAUTH_URL:?set in .env.production}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:?set in .env.production}
+      AUTH_EMAIL_SERVER: ${AUTH_EMAIL_SERVER:?set in .env.production}
+      AUTH_EMAIL_FROM: ${AUTH_EMAIL_FROM:?set in .env.production}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:?set in .env.production, e.g. rjcimpact.org}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+
+volumes:
+  postgres_data:
+  caddy_data:
+  caddy_config:

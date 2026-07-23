@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
   // blocks cross-origin dev/HMR resources from the "neuron" origin, the page
   // never hydrates, and client components (like the login form) don't work.
   allowedDevOrigins: ["neuron"],
+  // Production: emit a self-contained server (node_modules traced and pruned)
+  // that the Dockerfile copies into a slim runtime image.
+  output: "standalone",
 };
 
 export default nextConfig;

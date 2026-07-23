@@ -1,0 +1,7 @@
+# TLS termination for the IROI calculator. Caddy provisions and renews the
+# Let's Encrypt certificate automatically for SITE_ADDRESS (requires DNS for
+# the domain to point at this box and ports 80/443 reachable).
+{$SITE_ADDRESS} {
+	encode gzip
+	reverse_proxy app:3000
+}

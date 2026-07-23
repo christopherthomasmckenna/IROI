@@ -34,6 +34,39 @@ async function getClientIp(): Promise<string | null> {
   }
 }
 
+/** Send the magic-link email over SMTP (AUTH_EMAIL_SERVER). */
+async function sendMagicLinkEmail(to: string, url: string): Promise<void> {
+  const { createTransport } = await import('nodemailer')
+  const transport = createTransport(process.env.AUTH_EMAIL_SERVER)
+  const from = process.env.AUTH_EMAIL_FROM ?? 'noreply@iroi.app'
+  const host = new URL(url).host
+
+  const result = await transport.sendMail({
+    to,
+    from,
+    subject: `Sign in to ${host}`,
+    text: `Sign in to ${host}\n\nUse the link below to sign in. It expires in 24 hours and can only be used once.\n\n${url}\n\nIf you did not request this email, you can safely ignore it.\n`,
+    html: `
+<div style="font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px 16px; color: #18181b;">
+  <h2 style="font-size: 18px; margin: 0 0 12px;">Sign in to ${host}</h2>
+  <p style="font-size: 14px; color: #52525b; margin: 0 0 20px;">
+    Use the button below to sign in. The link expires in 24 hours and can only be used once.
+  </p>
+  <p style="margin: 0 0 20px;">
+    <a href="${url}" style="display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; padding: 10px 20px; border-radius: 8px;">Sign in</a>
+  </p>
+  <p style="font-size: 12px; color: #a1a1aa; margin: 0;">
+    If you did not request this email, you can safely ignore it.
+  </p>
+</div>`,
+  })
+
+  const failed = [...(result.rejected ?? []), ...(result.pending ?? [])].filter(Boolean)
+  if (failed.length > 0) {
+    throw new Error(`Magic-link email could not be sent to: ${failed.join(', ')}`)
+  }
+}
+
 /** Throws if the magic-link send for this email should be rate-limited. */
 async function enforceSendRateLimit(identifier: string): Promise<void> {
   const email = identifier.trim().toLowerCase()
@@ -88,13 +121,9 @@ export const authOptions: NextAuthOptions = {
           }
           return
         }
-        // Production: configure AUTH_EMAIL_SERVER (SMTP URL) and AUTH_EMAIL_FROM.
-        // The EmailProvider default implementation will handle sending via nodemailer
-        // when sendVerificationRequest is not overridden, but we override here so we
-        // can log in dev. For production, remove this override or wire in Resend/etc.
-        throw new Error(
-          'Production email not configured. Set AUTH_EMAIL_SERVER or implement a real mailer.'
-        )
+        // Real send: AUTH_EMAIL_SERVER is an SMTP URL (e.g. Brevo:
+        // smtp://LOGIN:SMTP_KEY@smtp-relay.brevo.com:587).
+        await sendMagicLinkEmail(identifier, url)
       },
     }),
   ],
