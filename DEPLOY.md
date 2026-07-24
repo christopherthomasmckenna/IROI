@@ -63,6 +63,11 @@ Cron it and copy the file off-box (scp/rclone). Restore:
 
 ## Notes
 
+- **DigitalOcean blocks outbound SMTP ports 25/465/587 on new accounts** (learned
+  in production 2026-07-24: `Connection timeout` from nodemailer while the same
+  credentials worked elsewhere). Brevo's port **2525** is open and is what
+  `AUTH_EMAIL_SERVER` uses: `smtp://...@smtp-relay.brevo.com:2525`.
+
 - Postgres is not exposed to the host/internet — only the app container
   reaches it on the compose network.
 - The magic-link rate limiter reads the client IP from `X-Forwarded-For`,
